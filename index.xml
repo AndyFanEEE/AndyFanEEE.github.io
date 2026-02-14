@@ -41,12 +41,26 @@
   &lt;thead&gt;
       &lt;tr&gt;
           &lt;th&gt;日期&lt;/th&gt;
-          &lt;th&gt;版本&lt;/th&gt;
           &lt;th&gt;更新内容&lt;/th&gt;
           &lt;th&gt;备注&lt;/th&gt;
       &lt;/tr&gt;
   &lt;/thead&gt;
   &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td&gt;2026.2.12&lt;/td&gt;
+          &lt;td&gt;创建博客&lt;/td&gt;
+          &lt;td&gt;&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;2026.2.12&lt;/td&gt;
+          &lt;td&gt;将博客部署到github&lt;/td&gt;
+          &lt;td&gt;&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;2026.2.13&lt;/td&gt;
+          &lt;td&gt;完成github自动化部署&lt;/td&gt;
+          &lt;td&gt;&lt;/td&gt;
+      &lt;/tr&gt;
   &lt;/tbody&gt;
 &lt;/table&gt;
 </description>
