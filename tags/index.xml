@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Tags on FaN</title>
+        <link>https://AndyFanEEE.github.io/tags/</link>
+        <description>Recent content in Tags on FaN</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <copyright>Example Person</copyright>
+        <lastBuildDate>Thu, 12 Feb 2026 14:39:46 +0800</lastBuildDate><atom:link href="https://AndyFanEEE.github.io/tags/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>123</title>
+        <link>https://AndyFanEEE.github.io/tags/123/</link>
+        <pubDate>Thu, 12 Feb 2026 14:39:46 +0800</pubDate>
+        
+        <guid>https://AndyFanEEE.github.io/tags/123/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Emoji</title>
+        <link>https://AndyFanEEE.github.io/tags/emoji/</link>
+        <pubDate>Tue, 05 Mar 2019 00:00:00 +0000</pubDate>
+        
+        <guid>https://AndyFanEEE.github.io/tags/emoji/</guid>
+        <description></description>
+        </item>
+        
+    </channel>
+</rss>

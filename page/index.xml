@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Pages on FaN</title>
+        <link>https://AndyFanEEE.github.io/page/</link>
+        <description>Recent content in Pages on FaN</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <copyright>Example Person</copyright>
+        <lastBuildDate>Thu, 12 Feb 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://AndyFanEEE.github.io/page/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>更新日志|Logs</title>
+        <link>https://AndyFanEEE.github.io/logs/</link>
+        <pubDate>Thu, 12 Feb 2026 00:00:00 +0000</pubDate>
+        
+        <guid>https://AndyFanEEE.github.io/logs/</guid>
+        <description>&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th&gt;日期&lt;/th&gt;
+          &lt;th&gt;版本&lt;/th&gt;
+          &lt;th&gt;更新内容&lt;/th&gt;
+          &lt;th&gt;备注&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+</description>
+        </item>
+        <item>
+        <title>归档|Archives</title>
+        <link>https://AndyFanEEE.github.io/archives/</link>
+        <pubDate>Thu, 12 Feb 2026 00:00:00 +0000</pubDate>
+        
+        <guid>https://AndyFanEEE.github.io/archives/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>分类＆标签|Cats＆Tags</title>
+        <link>https://AndyFanEEE.github.io/%E5%88%86%E7%B1%BB%E6%A0%87%E7%AD%BEcatstags/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        
+        <guid>https://AndyFanEEE.github.io/%E5%88%86%E7%B1%BB%E6%A0%87%E7%AD%BEcatstags/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>介绍|Introduction</title>
+        <link>https://AndyFanEEE.github.io/%E4%BB%8B%E7%BB%8Dintroduction/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        
+        <guid>https://AndyFanEEE.github.io/%E4%BB%8B%E7%BB%8Dintroduction/</guid>
+        <description>&lt;p&gt;ID：FaN&lt;br&gt;
+职业： 网安专业大学生（即将大四的求生者）&lt;br&gt;
+现状： 挑战“电子竞技”以及“第九艺术”支线任务多年，职业技能树至今未开。&lt;br&gt;
+本博客没什么特别高级的技术知识能写，只是想把欠下的课补上，把踩过的坑填平，记录自己的学习生活与过程。欢迎围观一名大学生的逆袭（希望不是Flag）。&lt;br&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>搜索|Search</title>
+        <link>https://AndyFanEEE.github.io/search/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        
+        <guid>https://AndyFanEEE.github.io/search/</guid>
+        <description></description>
+        </item>
+        
+    </channel>
+</rss>
