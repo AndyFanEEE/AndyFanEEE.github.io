@@ -6,7 +6,7 @@
         <description>Recent content in Pages on FaN</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <copyright>Example Person</copyright>
+        <copyright>Fan&#39;s Blog</copyright>
         <lastBuildDate>Thu, 12 Feb 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://AndyFanEEE.github.io/page/index.xml" rel="self" type="application/rss+xml" /><item>
         <title>更新日志|Logs</title>
         <link>https://AndyFanEEE.github.io/logs/</link>
@@ -35,6 +35,11 @@
       &lt;tr&gt;
           &lt;td&gt;2026.2.13&lt;/td&gt;
           &lt;td&gt;完成github自动化部署&lt;/td&gt;
+          &lt;td&gt;&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;2026.2.14&lt;/td&gt;
+          &lt;td&gt;完成背景图和头像字体的美化&lt;/td&gt;
           &lt;td&gt;&lt;/td&gt;
       &lt;/tr&gt;
   &lt;/tbody&gt;
