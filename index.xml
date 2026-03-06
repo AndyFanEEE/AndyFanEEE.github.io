@@ -13,7 +13,8 @@
         <pubDate>Fri, 13 Feb 2026 16:02:10 +0800</pubDate>
         
         <guid>https://AndyFanEEE.github.io/p/new/</guid>
-        <description></description>
+        <description>&lt;p&gt;newnewnew&lt;/p&gt;
+</description>
         </item>
         <item>
         <title>更新日志|Logs</title>
@@ -48,6 +49,16 @@
       &lt;tr&gt;
           &lt;td&gt;2026.2.14&lt;/td&gt;
           &lt;td&gt;完成背景图和头像字体的美化&lt;/td&gt;
+          &lt;td&gt;&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;2026.3.7&lt;/td&gt;
+          &lt;td&gt;引入了pjax&lt;/td&gt;
+          &lt;td&gt;实现了无刷新加载页面&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;2026.3.7&lt;/td&gt;
+          &lt;td&gt;加入了加载动画&lt;/td&gt;
           &lt;td&gt;&lt;/td&gt;
       &lt;/tr&gt;
   &lt;/tbody&gt;
