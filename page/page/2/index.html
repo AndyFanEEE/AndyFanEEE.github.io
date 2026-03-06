@@ -75,6 +75,18 @@
         0% { transform: translateY(4rem); }
         100% { transform: translateY(0rem); }
     }
+    
+    [data-scheme="light"] body {
+        background: url(/OSP.png) no-repeat center center !important;
+        background-size: cover !important;
+        background-attachment: fixed !important;
+    }
+    
+    [data-scheme="dark"] body {
+        background: url(/R-C.jpg) no-repeat center center !important;
+        background-size: cover !important;
+        background-attachment: fixed !important;
+    }
 </style>
 
     </head>
@@ -526,14 +538,6 @@
     }());
 </script>
 <style>
-  body {
-    background: url(https://AndyFanEEE.github.io/background/rainbow.png) no-repeat center top;
-    background-size: cover;
-    background-attachment: fixed;
-  }
-</style>
-
-<style>
   @font-face {
     font-family: '狮尾体';
     src: url(https://AndyFanEEE.github.io/font/SweiHalfMoonCJKsc-Medium.ttf) format('truetype');
@@ -559,39 +563,31 @@
     pjax.handleResponse = function(responseText, request, href, options) {
         if (request.responseText.match("<html")) {
             if (responseText) {
-                
                 let newDom = new DOMParser().parseFromString(responseText, 'text/html');
-                
                 let bodyClass = newDom.body.className;
                 document.body.setAttribute("class", bodyClass)
             }
-            
             pjax._handleResponse(responseText, request, href, options);
         } else {
-            
         }
     }
 </script>
 
 <script>
     document.addEventListener('pjax:complete', () => {
-        
         window.Stack.init();
     })
 </script>
 
 <script>
     async function renderKaTeX() {
-        
         let katex = document.querySelector(".math-katex");
         if (!katex) {
             return;
         }
-        
         while (typeof renderMathInElement !== 'function') {
             await delay(500);
         }        
-        
         renderMathInElement(document.body, {
             delimiters: [
                 { left: "$$", right: "$$", display: true },
@@ -603,8 +599,6 @@
         });
     }
     
-    
-
     function delay(time) {
         return new Promise(resolve => {
             setTimeout(resolve, time)
@@ -618,26 +612,21 @@
 
 
 
-    
     <script src=https://AndyFanEEE.github.io/js/topbar.min.js></script>
 
 <script>
-    
     topbar.config({
         barColors: {
-            '0': 'rgba(255,  255, 255, 1)', 
-            '1.0': 'rgba(0, 149, 234,  1)' 
+            '0': 'rgba(255,  255, 255, 1)',
+            '1.0': 'rgba(0, 149, 234,  1)'
         }
     })
 	
     document.addEventListener('pjax:send', () => {
-        
         topbar.show();
     })
 	
     document.addEventListener('pjax:complete', () => {
-        ....
-        
         topbar.hide();
     })
 </script>
