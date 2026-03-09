@@ -6,7 +6,7 @@
 
 <link rel='canonical' href='https://AndyFanEEE.github.io/archives/'>
 
-<link rel="stylesheet" href="/scss/style.min.453a90aa363c938695cfee0e7f88faa4aab45d18404fc25fd6970c085dbe71d7.css"><meta property='og:title' content="归档|Archives">
+<link rel="stylesheet" href="/scss/style.min.6fe10bc85083cca372dc87fabe26dea9db704fabcee0a7de965ff3eb7579062b.css"><meta property='og:title' content="归档|Archives">
 <meta property='og:description' content="">
 <meta property='og:url' content='https://AndyFanEEE.github.io/archives/'>
 <meta property='og:site_name' content='FaN'>
@@ -99,6 +99,73 @@
     
     [data-scheme="dark"] .mode-text-dark {
         display: inline;
+    }
+    
+    .aplayer.aplayer-fixed {
+        position: fixed !important;
+        bottom: 60px !important;
+        left: 0 !important;
+        right: auto !important;
+        top: auto !important;
+        z-index: 9998 !important;
+        width: 400px !important;
+        max-width: 400px !important;
+    }
+    
+    .aplayer.aplayer-fixed .aplayer-body {
+        position: fixed !important;
+        bottom: 60px !important;
+        left: 0 !important;
+        width: 400px !important;
+        border-radius: 0 0 2px 2px !important;
+    }
+    
+    .aplayer.aplayer-fixed .aplayer-list {
+        position: fixed !important;
+        bottom: 142px !important;
+        left: 0 !important;
+        width: 400px !important;
+        max-height: 300px !important;
+        overflow-y: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        border-radius: 2px 2px 0 0 !important;
+    }
+    
+    .aplayer.aplayer-fixed .aplayer-list ol {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .aplayer.aplayer-fixed .aplayer-list ol li {
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+    
+    .aplayer.aplayer-fixed .aplayer-list ol li .aplayer-list-index {
+        display: inline-block !important;
+        width: 20px !important;
+    }
+    
+    .aplayer.aplayer-fixed .aplayer-list ol li .aplayer-list-title {
+        display: inline-block !important;
+        max-width: 200px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+        vertical-align: middle !important;
+    }
+    
+    .aplayer.aplayer-fixed .aplayer-list ol li .aplayer-list-author {
+        display: inline-block !important;
+        max-width: 120px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+        vertical-align: middle !important;
+        float: right !important;
     }
 </style>
 
@@ -562,6 +629,101 @@
             setTimeout(hideLoading, 1200);
         });
     }
+</script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
+<script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
+
+<script>
+(function() {
+    function initAPlayer() {
+        if (typeof APlayer === 'undefined') {
+            setTimeout(initAPlayer, 100);
+            return;
+        }
+        
+        var aplayerContainer = document.createElement('div');
+        aplayerContainer.id = 'aplayer';
+        document.body.appendChild(aplayerContainer);
+        
+        try {
+            var myPlayer = new APlayer({
+                container: aplayerContainer,
+                fixed: true,
+                lrcType: 3,
+                audio: [
+                    {
+                        name: 'Lemon',
+                        artist: '米津玄師',
+                        url: 'music/Lemon - 米津玄师/Lemon.mp3',
+                        cover: 'music/Lemon - 米津玄师/Lemon.mp3',
+                        lrc: 'music/Lemon - 米津玄师/Lemon-米津玄師-歌词.lrc'
+                    },
+                    {
+                        name: 'Oz.',
+                        artist: 'yama',
+                        url: 'music/Oz. - yama/Oz.mp3',
+                        cover: 'music/Oz. - yama/Oz.mp3',
+                        lrc: 'music/Oz. - yama/Oz.-yama-歌词.lrc'
+                    },
+                    {
+                        name: 'Walking with you',
+                        artist: 'Novelbright',
+                        url: 'music/Walking with you - Novelbright/Novelbright - Walking with you.mp3',
+                        cover: 'music/Walking with you - Novelbright/Novelbright - Walking with you.mp3',
+                        lrc: 'music/Walking with you - Novelbright/Walking with you-Novelbright-歌词.lrc'
+                    },
+                    {
+                        name: '夏実',
+                        artist: 'AKASAKI',
+                        url: 'music/夏実 - AKASAKI/夏実 .mp3',
+                        cover: 'music/夏実 - AKASAKI/夏実 .mp3',
+                        lrc: 'music/夏実 - AKASAKI/夏実-AKASAKI-歌词.lrc'
+                    },
+                    {
+                        name: '派对动物',
+                        artist: '五月天',
+                        url: 'music/派对动物 - 五月天/派对动物.mp3',
+                        cover: 'music/派对动物 - 五月天/派对动物.mp3',
+                        lrc: 'music/派对动物 - 五月天/派对动物-五月天-歌词.lrc'
+                    },
+                    {
+                        name: '灰色と青',
+                        artist: '米津玄師 & 菅田将暉',
+                        url: 'music/灰色と青 - 米津玄师&菅田将暉/灰色と青.MP3',
+                        cover: 'music/灰色と青 - 米津玄师&菅田将暉/灰色と青.MP3',
+                        lrc: 'music/灰色と青 - 米津玄师&菅田将暉/灰色と青-菅田将暉&米津玄師-歌词.lrc'
+                    },
+                    {
+                        name: '空想フォレスト',
+                        artist: '伊東歌詞太郎',
+                        url: 'music/空想フォレスト - 伊東歌詞太郎/空想フォレスト.mp3',
+                        cover: 'music/空想フォレスト - 伊東歌詞太郎/空想フォレスト.mp3',
+                        lrc: 'music/空想フォレスト - 伊東歌詞太郎/空想フォレスト-伊東歌詞太郎-歌词.lrc'
+                    },
+                    {
+                        name: '老人と海',
+                        artist: 'ヨルシカ',
+                        url: 'music/老人と海 - ヨルシカ/老人与海.mp3',
+                        cover: 'music/老人と海 - ヨルシカ/老人与海.mp3',
+                        lrc: 'music/老人と海 - ヨルシカ/老人と海-ヨルシカ-歌词.lrc'
+                    }
+                ]
+            });
+            
+            window.myPlayer = myPlayer;
+            console.log('APlayer initialized successfully');
+        } catch(e) {
+            console.error('APlayer init error:', e);
+        }
+    }
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initAPlayer);
+    } else {
+        initAPlayer();
+    }
+})();
 </script>
 
     </body>
