@@ -14,6 +14,19 @@
 <meta name="twitter:title" content="基于机器学习的击键动力学的身份认证系统实现">
 <meta name="twitter:description" content="前言 摆烂了好久，一直没想好第一个文章写什么内容。最终这学期身份认证课程有一个课程项目，刚好能写下给实现过程做个简单的记录。\n">
     <link rel="shortcut icon" href="/favicon.ico" />
+<script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        },
+        svg: {
+            fontCache: 'global'
+        }
+    };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
 <style>
     table {
         border-collapse: collapse;
@@ -496,7 +509,7 @@
         <li><a href="#后端特征提取与距离计算">后端：特征提取与距离计算</a>
           <ol>
             <li><a href="#第一阶段特征提取">第一阶段：特征提取</a></li>
-            <li><a href="#第二阶段马氏距离计算">第二阶段：马氏距离计算</a></li>
+            <li><a href="#第二阶段距离计算">第二阶段：距离计算</a></li>
             <li><a href="#第三阶段认证">第三阶段：认证</a></li>
           </ol>
         </li>
@@ -574,7 +587,7 @@
 
 
                 <time class="article-time--reading">
-                    阅读时长: 9 分钟
+                    阅读时长: 10 分钟
                 </time>
             </div>
         
@@ -941,68 +954,78 @@
 </span></span><span class="line"><span class="cl">    <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">features</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h4 id="第二阶段马氏距离计算">第二阶段：马氏距离计算
-</h4><p>特征向量提取出来之后，认证时需要和该用户的模板计算相似度。</p>
-<p>有两种距离计算方法：一种是<strong style="color: blue;">欧氏距离</strong>，一种是<strong style="color: blue;">马氏距离</strong>。</p>
-<p><em>算法层面分析：</em></p>
-<p>欧氏距离：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">输入：x, y
-</span></span><span class="line"><span class="cl">for i in 特征维度:
-</span></span><span class="line"><span class="cl">    累加 (x_i - y_i)^2
-</span></span><span class="line"><span class="cl">开根号
-</span></span><span class="line"><span class="cl">时间复杂度：O(n)
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>马氏距离：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">输入：x, 均值 μ, 协方差矩阵 S
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">第一步：计算差值向量
-</span></span><span class="line"><span class="cl">    d = x - μ
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">第二步：计算协方差矩阵 S
-</span></span><span class="line"><span class="cl">    S = cov(X)
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">第三步：求逆矩阵
-</span></span><span class="line"><span class="cl">    S^{-1}
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">第四步：矩阵运算
-</span></span><span class="line"><span class="cl">    distance = sqrt(d^T * S^{-1} * d)
-</span></span><span class="line"><span class="cl">    时间复杂度：
-</span></span><span class="line"><span class="cl">    协方差计算：O(n²)
-</span></span><span class="line"><span class="cl">    矩阵求逆：O(n³)
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>这里用的是马氏距离而不是欧氏距离，原因是欧氏距离把 31 个维度平等对待，而实际上不同特征的稳定性差异很大——方差大的特征说明这一维本身波动就大，不应该和方差小的稳定特征贡献相同的权重。</p>
-<p>马氏距离通过协方差矩阵的逆 Σ⁻¹ 自动解决这个问题，方差大的维度在 Σ⁻¹ 里权重小，方差小的维度权重大：</p>
+</div><h4 id="第二阶段距离计算">第二阶段：距离计算
+</h4><p>特征向量提取出来之后，认证时需要计算当前输入与该用户模板之间的<strong>相似度</strong>。相似度越高，说明越可能是同一个人。</p>
+<p>下面介绍两种经典的距离计算方法：</p>
+<hr>
+<h5 id="1-欧氏距离euclidean-distance">1. 欧氏距离（Euclidean Distance）
+</h5><p>欧氏距离是最直观的距离度量方式，相当于计算两点之间的直线距离。</p>
+<p><strong>公式：</strong></p>
+$$
+d_{欧氏}(x, y) = \sqrt{\sum_{i=1}^{n}(x_i - y_i)^2}
+$$<p>其中 $x_i$ 和 $y_i$ 分别是两个向量的第 $i$ 维特征值，$n$ 是特征维度总数（本项目 $n = 31$）。</p>
+<p><strong>直观理解：</strong> 把 31 维特征空间中的两个点，直接计算它们之间的&quot;直线距离&quot;。</p>
+<p><strong>优点：</strong> 计算简单，复杂度低 $O(n)$</p>
+<p><strong>缺点：</strong> 把 31 个维度平等对待，认为每个维度的贡献都一样。但实际上不同特征的稳定性差异很大——比如某些维度在不同次输入时波动很大（方差大），而有些维度非常稳定（方差小）。欧氏距离对这两种维度的&quot;惩罚&quot;是一样的，这不合理。</p>
+<hr>
+<h5 id="2-马氏距离mahalanobis-distance">2. 马氏距离（Mahalanobis Distance）
+</h5><p>马氏距离考虑了不同维度之间的相关性，以及各维度本身波动程度的差异。</p>
+<p><strong>公式：</strong></p>
+$$
+d_{马氏}(x, \mu) = \sqrt{(x - \mu)^T \Sigma^{-1} (x - \mu)}
+$$<p>其中：</p>
+<ul>
+<li>$x$ 是当前输入的特征向量</li>
+<li>$\mu$ 是该用户历史模板的均值向量</li>
+<li>$\Sigma$ 是协方差矩阵，反映了各维度之间的相关性和各自的波动程度</li>
+<li>$\Sigma^{-1}$ 是协方差矩阵的逆矩阵</li>
+</ul>
+<p><strong>计算步骤：</strong></p>
+<ol>
+<li><strong>计算差值向量</strong> $d = x - \mu$</li>
+<li><strong>计算协方差矩阵</strong> $\Sigma = cov(X)$，$X$ 是历史样本矩阵</li>
+<li><strong>求协方差矩阵的逆</strong> $\Sigma^{-1}$</li>
+<li><strong>代入公式计算</strong> $d_{马氏} = \sqrt{d^T \Sigma^{-1} d}$</li>
+</ol>
+<p><strong>直观理解：</strong> 想象你在一张纸上画了一个椭圆形的靶心，靶心是 $\mu$。欧氏距离不管你往哪个方向射，只要离靶心的直线距离一样，就得分一样；而马氏距离会看你射的方向——如果是沿着椭圆长轴的方向（波动大的维度），即使离靶心稍远也不会被认为差距很大；如果是沿着短轴的方向（波动小的维度），稍微偏离靶心就会被认为是差很多。</p>
+<p><strong>为什么本项目选择马氏距离：</strong></p>
+<p>方差大的维度 → 在 $\Sigma^{-1}$ 里权重小 → 即使波动大也不&quot;惩罚&quot;
+方差小的维度 → 在 $\Sigma^{-1}$ 里权重大 → 稍有波动就被&quot;惩罚&quot;</p>
+<p>这就是马氏距离的<strong>自适应加权</strong>特性，让稳定的特征更重要，让不稳定的特征影响更小。</p>
+<hr>
+<h5 id="3-两种距离的对比">3. 两种距离的对比
+</h5><div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th></th>
+          <th>欧氏距离</th>
+          <th>马氏距离</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>公式</td>
+          <td>$\sqrt{\sum(x_i-y_i)^2}$</td>
+          <td>$\sqrt{(x-\mu)^T\Sigma^{-1}(x-\mu)}$</td>
+      </tr>
+      <tr>
+          <td>复杂度</td>
+          <td>$O(n)$</td>
+          <td>$O(n^2)$ ~ $O(n^3)$</td>
+      </tr>
+      <tr>
+          <td>权重分配</td>
+          <td>所有维度平等</td>
+          <td>自适应分配</td>
+      </tr>
+      <tr>
+          <td>适用场景</td>
+          <td>各维度重要性一致</td>
+          <td>各维度重要性不同</td>
+      </tr>
+  </tbody>
+</table></div>
+<p>本项目最终选择<strong>马氏距离</strong>，原因正如上表所示——击键特征中不同维度的稳定性差异很大，马氏距离能自动给稳定的特征更高权重。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
