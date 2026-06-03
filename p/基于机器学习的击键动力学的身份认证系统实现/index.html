@@ -995,35 +995,35 @@ $$<p>其中：</p>
 <hr>
 <h5 id="3-两种距离的对比">3. 两种距离的对比
 </h5><div class="table-wrapper"><table>
-  <thead>
-      <tr>
-          <th></th>
-          <th>欧氏距离</th>
-          <th>马氏距离</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td>公式</td>
-          <td>$\sqrt{\sum(x_i-y_i)^2}$</td>
-          <td>$\sqrt{(x-\mu)^T\Sigma^{-1}(x-\mu)}$</td>
-      </tr>
-      <tr>
-          <td>复杂度</td>
-          <td>$O(n)$</td>
-          <td>$O(n^2)$ ~ $O(n^3)$</td>
-      </tr>
-      <tr>
-          <td>权重分配</td>
-          <td>所有维度平等</td>
-          <td>自适应分配</td>
-      </tr>
-      <tr>
-          <td>适用场景</td>
-          <td>各维度重要性一致</td>
-          <td>各维度重要性不同</td>
-      </tr>
-  </tbody>
+	<thead>
+			<tr>
+					<th></th>
+					<th>欧氏距离</th>
+					<th>马氏距离</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>公式</td>
+					<td>$\sqrt{\sum(x_i-y_i)^2}$</td>
+					<td>$\sqrt{(x-\mu)^T\Sigma^{-1}(x-\mu)}$</td>
+			</tr>
+			<tr>
+					<td>复杂度</td>
+					<td>$O(n)$</td>
+					<td>$O(n^2)$ ~ $O(n^3)$</td>
+			</tr>
+			<tr>
+					<td>权重分配</td>
+					<td>所有维度平等</td>
+					<td>自适应分配</td>
+			</tr>
+			<tr>
+					<td>适用场景</td>
+					<td>各维度重要性一致</td>
+					<td>各维度重要性不同</td>
+			</tr>
+	</tbody>
 </table></div>
 <p>本项目最终选择<strong>马氏距离</strong>，原因正如上表所示——击键特征中不同维度的稳定性差异很大，马氏距离能自动给稳定的特征更高权重。</p>
 <div class="highlight"><div class="chroma">

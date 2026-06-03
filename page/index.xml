@@ -14,45 +14,45 @@
         
         <guid>https://AndyFanEEE.github.io/logs/</guid>
         <description>&lt;table&gt;
-  &lt;thead&gt;
-      &lt;tr&gt;
-          &lt;th&gt;日期&lt;/th&gt;
-          &lt;th&gt;更新内容&lt;/th&gt;
-          &lt;th&gt;备注&lt;/th&gt;
-      &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-      &lt;tr&gt;
-          &lt;td&gt;2026.2.12&lt;/td&gt;
-          &lt;td&gt;创建博客&lt;/td&gt;
-          &lt;td&gt;&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-          &lt;td&gt;2026.2.12&lt;/td&gt;
-          &lt;td&gt;将博客部署到github&lt;/td&gt;
-          &lt;td&gt;&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-          &lt;td&gt;2026.2.13&lt;/td&gt;
-          &lt;td&gt;完成github自动化部署&lt;/td&gt;
-          &lt;td&gt;&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-          &lt;td&gt;2026.2.14&lt;/td&gt;
-          &lt;td&gt;完成背景图和头像字体的美化&lt;/td&gt;
-          &lt;td&gt;&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-          &lt;td&gt;2026.3.7&lt;/td&gt;
-          &lt;td&gt;引入了pjax&lt;/td&gt;
-          &lt;td&gt;实现了无刷新加载页面&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-          &lt;td&gt;2026.3.7&lt;/td&gt;
-          &lt;td&gt;加入了加载动画&lt;/td&gt;
-          &lt;td&gt;&lt;/td&gt;
-      &lt;/tr&gt;
-  &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;日期&lt;/th&gt;
+					&lt;th&gt;更新内容&lt;/th&gt;
+					&lt;th&gt;备注&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;2026.2.12&lt;/td&gt;
+					&lt;td&gt;创建博客&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;2026.2.12&lt;/td&gt;
+					&lt;td&gt;将博客部署到github&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;2026.2.13&lt;/td&gt;
+					&lt;td&gt;完成github自动化部署&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;2026.2.14&lt;/td&gt;
+					&lt;td&gt;完成背景图和头像字体的美化&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;2026.3.7&lt;/td&gt;
+					&lt;td&gt;引入了pjax&lt;/td&gt;
+					&lt;td&gt;实现了无刷新加载页面&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;2026.3.7&lt;/td&gt;
+					&lt;td&gt;加入了加载动画&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 </description>
         </item>
@@ -79,9 +79,9 @@
         
         <guid>https://AndyFanEEE.github.io/%E4%BB%8B%E7%BB%8Dintroduction/</guid>
         <description>&lt;p&gt;ID：FaN&lt;br&gt;
-职业： 网安专业大学生（即将大四的求生者）&lt;br&gt;
-现状： 挑战“电子竞技”以及“第九艺术”支线任务多年，职业技能树至今未开。&lt;br&gt;
-本博客没什么特别高级的技术知识能写，只是想把欠下的课补上，把踩过的坑填平，记录自己的学习生活与过程。欢迎围观一名大学生的逆袭（希望不是Flag）。&lt;br&gt;&lt;/p&gt;
+职业： 网安专业大学生（即将被大四的萌新）&lt;br&gt;
+现状： 挑战“电子竞技”以及“第九艺术”支线任务多年，职业技能树至今未开，AI是我爹，于是开始学习AI。&lt;br&gt;
+本博客没什么特别高级的技术知识能写，只是单纯记录自己的学习生活与过程。博客佛系更新，但是有做东西应该都会更一点，大家多多关注支持一下，有建议可以直接告诉我。&lt;br&gt;&lt;/p&gt;
 </description>
         </item>
         <item>

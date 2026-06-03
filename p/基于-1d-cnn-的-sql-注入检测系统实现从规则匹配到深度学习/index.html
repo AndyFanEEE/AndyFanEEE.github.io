@@ -607,35 +607,35 @@
 </h2><p>输入一条 SQL 语句，系统判断它是正常请求还是注入攻击，输出攻击概率（0~1）和风险等级（安全 / 中危 / 高危）。不写规则，让模型从数据里自己学。</p>
 <h3 id="和传统方案的核心区别">和传统方案的核心区别
 </h3><div class="table-wrapper"><table>
-  <thead>
-      <tr>
-          <th></th>
-          <th>正则规则匹配（传统 WAF）</th>
-          <th><span style="color: #3498db;">本方案（1D-CNN）</span></th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td>检测方式</td>
-          <td>人工维护关键词黑名单</td>
-          <td>模型自动学习攻击特征</td>
-      </tr>
-      <tr>
-          <td>对变形攻击</td>
-          <td><code>SeLeCt</code>、<code>/**/</code> 轻松绕过</td>
-          <td>字符级建模，变形影响小</td>
-      </tr>
-      <tr>
-          <td>新型攻击</td>
-          <td>需要手动更新规则</td>
-          <td>重新训练即可覆盖</td>
-      </tr>
-      <tr>
-          <td>误报率</td>
-          <td>高（正常 SQL 含关键词也触发）</td>
-          <td>低（实测误报仅 3/3853）</td>
-      </tr>
-  </tbody>
+	<thead>
+			<tr>
+					<th></th>
+					<th>正则规则匹配（传统 WAF）</th>
+					<th><span style="color: #3498db;">本方案（1D-CNN）</span></th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>检测方式</td>
+					<td>人工维护关键词黑名单</td>
+					<td>模型自动学习攻击特征</td>
+			</tr>
+			<tr>
+					<td>对变形攻击</td>
+					<td><code>SeLeCt</code>、<code>/**/</code> 轻松绕过</td>
+					<td>字符级建模，变形影响小</td>
+			</tr>
+			<tr>
+					<td>新型攻击</td>
+					<td>需要手动更新规则</td>
+					<td>重新训练即可覆盖</td>
+			</tr>
+			<tr>
+					<td>误报率</td>
+					<td>高（正常 SQL 含关键词也触发）</td>
+					<td>低（实测误报仅 3/3853）</td>
+			</tr>
+	</tbody>
 </table></div>
 <h3 id="技术栈">技术栈
 </h3><div class="table-wrapper"><table>
@@ -743,26 +743,26 @@ $$P = \frac{1}{1 + e^{-3.82}} = 0.9785$$</blockquote>
 <hr>
 <p>输出攻击概率 <strong>97.9%</strong>，标记高危。风险等级按概率区间划分：</p>
 <div class="table-wrapper"><table>
-  <thead>
-      <tr>
-          <th>概率范围</th>
-          <th>风险等级</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td>&lt; 0.5</td>
-          <td>✓ 安全</td>
-      </tr>
-      <tr>
-          <td>0.5 ~ 0.8</td>
-          <td>⚠ 中危</td>
-      </tr>
-      <tr>
-          <td>≥ 0.8</td>
-          <td>⚠ 高危</td>
-      </tr>
-  </tbody>
+	<thead>
+			<tr>
+					<th>概率范围</th>
+					<th>风险等级</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>&lt; 0.5</td>
+					<td>✓ 安全</td>
+			</tr>
+			<tr>
+					<td>0.5 ~ 0.8</td>
+					<td>⚠ 中危</td>
+			</tr>
+			<tr>
+					<td>≥ 0.8</td>
+					<td>⚠ 高危</td>
+			</tr>
+	</tbody>
 </table></div>
 <p><strong>关键公式：Sigmoid 激活函数</strong></p>
 $$
