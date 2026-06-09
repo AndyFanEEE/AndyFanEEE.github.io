@@ -312,7 +312,7 @@
             
                 <li>
                     <a 
-                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        href='https://github.com/AndyFanEEE'
                         target="_blank"
                         title="GitHub"
                         rel="me"
@@ -322,26 +322,6 @@
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
   <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
-</svg>
-
-
-
-                        
-                    </a>
-                </li>
-            
-                <li>
-                    <a 
-                        href='https://twitter.com'
-                        target="_blank"
-                        title="Twitter"
-                        rel="me"
-                    >
-                        
-                        
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
 </svg>
 
 
@@ -688,6 +668,81 @@
 </script>
 
 
+<script>
+    (function () {
+        const giscusConfig = {
+            repo: "AndyFanEEE\/AndyFanEEE.github.io",
+            repoID: "R_kgDORP_Apg",
+            category: "General",
+            categoryID: "DIC_kwDORP_Aps4C-zP6",
+            mapping: "pathname",
+            strict: "0",
+            reactionsEnabled: "1",
+            emitMetadata: "0",
+            inputPosition: "top",
+            lightTheme: "light",
+            darkTheme: "dark_dimmed",
+            lang: "zh-CN"
+        };
+
+        function currentGiscusTheme() {
+            return document.documentElement.dataset.scheme === "dark" ? giscusConfig.darkTheme : giscusConfig.lightTheme;
+        }
+
+        window.reloadGiscus = function () {
+            const container = document.getElementById("comment-thread");
+            if (!container) {
+                return;
+            }
+
+            container.innerHTML = "";
+            if (!giscusConfig.repo || !giscusConfig.repoID || !giscusConfig.category || !giscusConfig.categoryID) {
+                container.innerHTML = '<p class="comment-setup-warning">评论组件配置不完整，请检查 hugo.yaml 中 giscus 的 repoID 和 categoryID。</p>';
+                return;
+            }
+
+            const script = document.createElement("script");
+            script.src = "https://giscus.app/client.js";
+            script.setAttribute("data-repo", giscusConfig.repo);
+            script.setAttribute("data-repo-id", giscusConfig.repoID);
+            script.setAttribute("data-category", giscusConfig.category);
+            script.setAttribute("data-category-id", giscusConfig.categoryID);
+            script.setAttribute("data-mapping", giscusConfig.mapping);
+            script.setAttribute("data-strict", giscusConfig.strict);
+            script.setAttribute("data-reactions-enabled", giscusConfig.reactionsEnabled);
+            script.setAttribute("data-emit-metadata", giscusConfig.emitMetadata);
+            script.setAttribute("data-input-position", giscusConfig.inputPosition);
+            script.setAttribute("data-theme", currentGiscusTheme());
+            script.setAttribute("data-lang", giscusConfig.lang);
+            script.setAttribute("data-loading", "lazy");
+            script.setAttribute("crossorigin", "anonymous");
+            script.async = true;
+
+            container.appendChild(script);
+        };
+
+        window.reloadGiscus();
+        document.addEventListener("pjax:complete", window.reloadGiscus);
+        window.addEventListener("onColorSchemeChange", function (event) {
+            const giscus = document.querySelector("iframe.giscus-frame");
+            if (!giscus) {
+                return;
+            }
+
+            giscus.contentWindow.postMessage(
+                {
+                    giscus: {
+                        setConfig: {
+                            theme: event.detail === "dark" ? giscusConfig.darkTheme : giscusConfig.lightTheme
+                        }
+                    }
+                },
+                "https://giscus.app"
+            );
+        });
+    })();
+</script>
+
 
 <script>
     async function renderKaTeX() {
@@ -767,6 +822,10 @@
 <script>
 (function() {
     function initAPlayer() {
+        if (window.myPlayer) {
+            return;
+        }
+
         if (typeof APlayer === 'undefined') {
             setTimeout(initAPlayer, 100);
             return;
@@ -785,58 +844,58 @@
                     {
                         name: 'Lemon',
                         artist: '米津玄師',
-                        url: encodeURI('music/Lemon - 米津玄师/Lemon.mp3'),
-                        cover: encodeURI('music/Lemon - 米津玄师/Lemon.mp3'),
-                        lrc: encodeURI('music/Lemon - 米津玄师/Lemon-米津玄師-歌词.lrc')
+                        url: encodeURI('/music/Lemon - 米津玄师/Lemon.mp3'),
+                        cover: encodeURI('/music/Lemon - 米津玄师/Lemon.mp3'),
+                        lrc: encodeURI('/music/Lemon - 米津玄师/Lemon-米津玄師-歌词.lrc')
                     },
                     {
                         name: 'Oz.',
                         artist: 'yama',
-                        url: encodeURI('music/Oz. - yama/Oz.mp3'),
-                        cover: encodeURI('music/Oz. - yama/Oz.mp3'),
-                        lrc: encodeURI('music/Oz. - yama/Oz.-yama-歌词.lrc')
+                        url: encodeURI('/music/Oz. - yama/Oz.mp3'),
+                        cover: encodeURI('/music/Oz. - yama/Oz.mp3'),
+                        lrc: encodeURI('/music/Oz. - yama/Oz.-yama-歌词.lrc')
                     },
                     {
                         name: 'Walking with you',
                         artist: 'Novelbright',
-                        url: encodeURI('music/Walking with you - Novelbright/Novelbright - Walking with you.mp3'),
-                        cover: encodeURI('music/Walking with you - Novelbright/Novelbright - Walking with you.mp3'),
-                        lrc: encodeURI('music/Walking with you - Novelbright/Walking with you-Novelbright-歌词.lrc')
+                        url: encodeURI('/music/Walking with you - Novelbright/Novelbright - Walking with you.mp3'),
+                        cover: encodeURI('/music/Walking with you - Novelbright/Novelbright - Walking with you.mp3'),
+                        lrc: encodeURI('/music/Walking with you - Novelbright/Walking with you-Novelbright-歌词.lrc')
                     },
                     {
                         name: '夏実',
                         artist: 'AKASAKI',
-                        url: encodeURI('music/夏実 - AKASAKI/夏実 .mp3'),
-                        cover: encodeURI('music/夏実 - AKASAKI/夏実 .mp3'),
-                        lrc: encodeURI('music/夏実 - AKASAKI/夏実-AKASAKI-歌词.lrc')
+                        url: encodeURI('/music/夏実 - AKASAKI/夏実 .mp3'),
+                        cover: encodeURI('/music/夏実 - AKASAKI/夏実 .mp3'),
+                        lrc: encodeURI('/music/夏実 - AKASAKI/夏実-AKASAKI-歌词.lrc')
                     },
                     {
                         name: '派对动物',
                         artist: '五月天',
-                        url: encodeURI('music/派对动物 - 五月天/派对动物.mp3'),
-                        cover: encodeURI('music/派对动物 - 五月天/派对动物.mp3'),
-                        lrc: encodeURI('music/派对动物 - 五月天/派对动物-五月天-歌词.lrc')
+                        url: encodeURI('/music/派对动物 - 五月天/派对动物.mp3'),
+                        cover: encodeURI('/music/派对动物 - 五月天/派对动物.mp3'),
+                        lrc: encodeURI('/music/派对动物 - 五月天/派对动物-五月天-歌词.lrc')
                     },
                     {
                         name: '灰色と青',
                         artist: '米津玄師 & 菅田将暉',
-                        url: encodeURI('music/灰色と青 - 米津玄师&菅田将暉/灰色と青.MP3'),
-                        cover: encodeURI('music/灰色と青 - 米津玄师&菅田将暉/灰色と青.MP3'),
-                        lrc: encodeURI('music/灰色と青 - 米津玄师&菅田将暉/灰色と青-菅田将暉&米津玄師-歌词.lrc')
+                        url: encodeURI('/music/灰色と青 - 米津玄师&菅田将暉/灰色と青.MP3'),
+                        cover: encodeURI('/music/灰色と青 - 米津玄师&菅田将暉/灰色と青.MP3'),
+                        lrc: encodeURI('/music/灰色と青 - 米津玄师&菅田将暉/灰色と青-菅田将暉&米津玄師-歌词.lrc')
                     },
                     {
                         name: '空想フォレスト',
                         artist: '伊東歌詞太郎',
-                        url: encodeURI('music/空想フォレスト - 伊東歌詞太郎/空想フォレスト.mp3'),
-                        cover: encodeURI('music/空想フォレスト - 伊東歌詞太郎/空想フォレスト.mp3'),
-                        lrc: encodeURI('music/空想フォレスト - 伊東歌詞太郎/空想フォレスト-伊東歌詞太郎-歌词.lrc')
+                        url: encodeURI('/music/空想フォレスト - 伊東歌詞太郎/空想フォレスト.mp3'),
+                        cover: encodeURI('/music/空想フォレスト - 伊東歌詞太郎/空想フォレスト.mp3'),
+                        lrc: encodeURI('/music/空想フォレスト - 伊東歌詞太郎/空想フォレスト-伊東歌詞太郎-歌词.lrc')
                     },
                     {
                         name: '老人と海',
                         artist: 'ヨルシカ',
-                        url: encodeURI('music/老人と海 - ヨルシカ/老人与海.mp3'),
-                        cover: encodeURI('music/老人と海 - ヨルシカ/老人与海.mp3'),
-                        lrc: encodeURI('music/老人と海 - ヨルシカ/老人と海-ヨルシカ-歌词.lrc')
+                        url: encodeURI('/music/老人と海 - ヨルシカ/老人与海.mp3'),
+                        cover: encodeURI('/music/老人と海 - ヨルシカ/老人与海.mp3'),
+                        lrc: encodeURI('/music/老人と海 - ヨルシカ/老人と海-ヨルシカ-歌词.lrc')
                     }
                 ]
             });
