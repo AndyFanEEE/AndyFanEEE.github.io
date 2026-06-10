@@ -795,18 +795,115 @@
     })();
 </script>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
-<script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
+<style>
+    #lazy-music-trigger {
+        position: fixed;
+        left: 0;
+        bottom: 60px;
+        z-index: 9998;
+        width: 48px;
+        height: 48px;
+        border: 0;
+        border-radius: 0 8px 8px 0;
+        background: rgba(255, 255, 255, 0.92);
+        color: #222;
+        cursor: pointer;
+        font-size: 22px;
+        line-height: 48px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16);
+    }
+
+    [data-scheme="dark"] #lazy-music-trigger {
+        background: rgba(40, 44, 52, 0.95);
+        color: #fff;
+    }
+</style>
 
 <script>
 (function() {
-    function initAPlayer() {
+    var aplayerAssetPromise = null;
+
+    function loadScript(src) {
+        return new Promise(function (resolve, reject) {
+            var existing = document.querySelector('script[src="' + src + '"]');
+            if (existing) {
+                if (window.APlayer) {
+                    resolve();
+                } else {
+                    existing.addEventListener('load', resolve, { once: true });
+                    existing.addEventListener('error', reject, { once: true });
+                }
+                return;
+            }
+
+            var script = document.createElement('script');
+            script.src = src;
+            script.async = true;
+            script.onload = resolve;
+            script.onerror = reject;
+            document.head.appendChild(script);
+        });
+    }
+
+    function loadStyle(href) {
+        if (document.querySelector('link[href="' + href + '"]')) {
+            return;
+        }
+
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = href;
+        document.head.appendChild(link);
+    }
+
+    function loadAPlayerAssets() {
+        if (!aplayerAssetPromise) {
+            loadStyle('https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css');
+            aplayerAssetPromise = loadScript('https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js');
+        }
+
+        return aplayerAssetPromise;
+    }
+
+    function createMusicTrigger() {
+        if (window.myPlayer || document.getElementById('lazy-music-trigger')) {
+            return;
+        }
+
+        var button = document.createElement('button');
+        button.id = 'lazy-music-trigger';
+        button.type = 'button';
+        button.title = 'Play music';
+        button.setAttribute('aria-label', 'Play music');
+        button.textContent = '♪';
+        button.addEventListener('click', function () {
+            button.disabled = true;
+            button.textContent = '...';
+            loadAPlayerAssets()
+                .then(function () {
+                    initAPlayer(true);
+                })
+                .catch(function (error) {
+                    button.disabled = false;
+                    button.textContent = '♪';
+                    console.error('APlayer load error:', error);
+                });
+        });
+        document.body.appendChild(button);
+    }
+
+    function initAPlayer(shouldPlay) {
         if (window.myPlayer) {
+            if (shouldPlay && typeof window.myPlayer.play === 'function') {
+                window.myPlayer.play();
+            }
             return;
         }
 
         if (typeof APlayer === 'undefined') {
-            setTimeout(initAPlayer, 100);
+            loadAPlayerAssets().then(function () {
+                initAPlayer(shouldPlay);
+            });
             return;
         }
         
@@ -878,17 +975,28 @@
             });
             
             window.myPlayer = myPlayer;
+            var trigger = document.getElementById('lazy-music-trigger');
+            if (trigger) {
+                trigger.remove();
+            }
+            if (shouldPlay && typeof myPlayer.play === 'function') {
+                setTimeout(function () {
+                    myPlayer.play();
+                }, 0);
+            }
             console.log('APlayer initialized successfully');
         } catch(e) {
             console.error('APlayer init error:', e);
         }
     }
-    
+
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initAPlayer);
+        document.addEventListener('DOMContentLoaded', createMusicTrigger);
     } else {
-        initAPlayer();
+        createMusicTrigger();
     }
+
+    document.addEventListener('pjax:complete', createMusicTrigger);
 })();
 </script>
 
