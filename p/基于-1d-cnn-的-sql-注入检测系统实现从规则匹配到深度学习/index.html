@@ -985,32 +985,44 @@ $$<p>其中 $z$ 是最后一层全连接层的输出，$\sigma(z)$ 把任意实�
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>对应的可视化热力图如下：</p>
-<p><img src="/images/confusion_matrix.png"
-	
-	
-	
+<p><img src="/images/confusion_matrix_hu_e9cb31f9847263c7.png"
+	width="753"
+	height="734"
+	srcset="/images/confusion_matrix_hu_e9cb31f9847263c7.png 480w" sizes="(max-width: 768px) 100vw, 768px"
 	loading="lazy"
+	decoding="async"
 	
 		alt="混淆矩阵"
 	
 	
-></p>
+		class="gallery-image" 
+		data-flex-grow="102"
+		data-flex-basis="246px"
+	
+>
+</p>
 <p><strong>3848（TN）</strong>：正常请求被正确识别，占正常样本的 99.87%。这意味着正常操作请求几乎不会被误拦。</p>
 <p><strong>5（FP）</strong>：5条正常请求被误判为攻击，误报率约 0.13%。在 3853 条正常请求中只有5条误报。</p>
 <p><strong>19（FN）</strong>：19 条攻击漏判为正常，漏报率 ≈ 0.84%，是需要关注的指标。意味着每 100 条攻击中大概有 1 条会被漏判为正常。</p>
 <p><strong>2240（TP）</strong>：2240 条攻击被正确拦截，召回率 99.16%。绝大多数攻击都能被挡住。</p>
 <h3 id="roc-曲线">ROC 曲线
 </h3><p>ROC 曲线展示了模型在不同阈值下的真阳性率（TPR）和假阳性率（FPR）之间的权衡：</p>
-<p><img src="/images/roc_curve.png"
-	
-	
-	
+<p><img src="/images/roc_curve_hu_4a6145c09390a775.png"
+	width="884"
+	height="734"
+	srcset="/images/roc_curve_hu_fefd935e8046a7b8.png 480w, /images/roc_curve_hu_4a6145c09390a775.png 800w" sizes="(max-width: 768px) 100vw, 768px"
 	loading="lazy"
+	decoding="async"
 	
 		alt="ROC 曲线"
 	
 	
-></p>
+		class="gallery-image" 
+		data-flex-grow="120"
+		data-flex-basis="289px"
+	
+>
+</p>
 <p>AUC = 0.9993，这个数值非常接近 1，说明在几乎所有判定阈值下该模型都可以同时保持高召回率和极低的误报率——正常请求和攻击请求在概率分布上基本没有重叠，区分能力很强。从图中可以看到，模型的 ROC 曲线几乎贴着左上角，远优于随机分类器（虚线）。</p>
 <hr>
 <h2 id="踩坑记录">踩坑记录
@@ -1276,6 +1288,7 @@ $$<p>其中 $z$ 是最后一层全连接层的输出，$\sigma(z)$ 把任意实�
   @font-face {
     font-family: '狮尾体';
     src: url(https://AndyFanEEE.github.io/font/SweiHalfMoonCJKsc-Medium.ttf) format('truetype');
+    font-display: swap;
   }
 
   :root {
@@ -1483,68 +1496,66 @@ $$<p>其中 $z$ 是最后一层全连接层的输出，$\sigma(z)$ 把任意实�
         document.body.appendChild(aplayerContainer);
         
         try {
-            var myPlayer = new APlayer({
-                container: aplayerContainer,
-                fixed: true,
-                lrcType: 3,
-                audio: [
+            var audio = [
                     {
                         name: 'Lemon',
                         artist: '米津玄師',
                         url: encodeURI('/music/Lemon - 米津玄师/Lemon.mp3'),
-                        cover: encodeURI('/music/Lemon - 米津玄师/Lemon.mp3'),
                         lrc: encodeURI('/music/Lemon - 米津玄师/Lemon-米津玄師-歌词.lrc')
                     },
                     {
                         name: 'Oz.',
                         artist: 'yama',
                         url: encodeURI('/music/Oz. - yama/Oz.mp3'),
-                        cover: encodeURI('/music/Oz. - yama/Oz.mp3'),
                         lrc: encodeURI('/music/Oz. - yama/Oz.-yama-歌词.lrc')
                     },
                     {
                         name: 'Walking with you',
                         artist: 'Novelbright',
                         url: encodeURI('/music/Walking with you - Novelbright/Novelbright - Walking with you.mp3'),
-                        cover: encodeURI('/music/Walking with you - Novelbright/Novelbright - Walking with you.mp3'),
                         lrc: encodeURI('/music/Walking with you - Novelbright/Walking with you-Novelbright-歌词.lrc')
                     },
                     {
                         name: '夏実',
                         artist: 'AKASAKI',
                         url: encodeURI('/music/夏実 - AKASAKI/夏実 .mp3'),
-                        cover: encodeURI('/music/夏実 - AKASAKI/夏実 .mp3'),
                         lrc: encodeURI('/music/夏実 - AKASAKI/夏実-AKASAKI-歌词.lrc')
                     },
                     {
                         name: '派对动物',
                         artist: '五月天',
                         url: encodeURI('/music/派对动物 - 五月天/派对动物.mp3'),
-                        cover: encodeURI('/music/派对动物 - 五月天/派对动物.mp3'),
                         lrc: encodeURI('/music/派对动物 - 五月天/派对动物-五月天-歌词.lrc')
                     },
                     {
                         name: '灰色と青',
                         artist: '米津玄師 & 菅田将暉',
                         url: encodeURI('/music/灰色と青 - 米津玄师&菅田将暉/灰色と青.MP3'),
-                        cover: encodeURI('/music/灰色と青 - 米津玄师&菅田将暉/灰色と青.MP3'),
                         lrc: encodeURI('/music/灰色と青 - 米津玄师&菅田将暉/灰色と青-菅田将暉&米津玄師-歌词.lrc')
                     },
                     {
                         name: '空想フォレスト',
                         artist: '伊東歌詞太郎',
                         url: encodeURI('/music/空想フォレスト - 伊東歌詞太郎/空想フォレスト.mp3'),
-                        cover: encodeURI('/music/空想フォレスト - 伊東歌詞太郎/空想フォレスト.mp3'),
                         lrc: encodeURI('/music/空想フォレスト - 伊東歌詞太郎/空想フォレスト-伊東歌詞太郎-歌词.lrc')
                     },
                     {
                         name: '老人と海',
                         artist: 'ヨルシカ',
                         url: encodeURI('/music/老人と海 - ヨルシカ/老人与海.mp3'),
-                        cover: encodeURI('/music/老人と海 - ヨルシカ/老人与海.mp3'),
                         lrc: encodeURI('/music/老人と海 - ヨルシカ/老人と海-ヨルシカ-歌词.lrc')
                     }
-                ]
+            ];
+
+            audio.forEach(function (track) {
+                delete track.cover;
+            });
+
+            var myPlayer = new APlayer({
+                container: aplayerContainer,
+                fixed: true,
+                lrcType: 3,
+                audio: audio
             });
             
             window.myPlayer = myPlayer;

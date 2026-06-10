@@ -653,53 +653,77 @@
 </div>
 </div><p>不过在填配置之前GitHub那边要先准备好。</p>
 <p>第一步，访问自己的 GitHub 仓库，在 <code>Settings</code> 里找到 <code>Features</code>，把 <code>Discussions</code> 打开。</p>
-<p><img src="/images/hugo-giscus-comment/enable-discussions.png"
-	
-	
-	
+<p><img src="/images/hugo-giscus-comment/enable-discussions_hu_65fb2c47bfd86e8e.png"
+	width="1392"
+	height="1266"
+	srcset="/images/hugo-giscus-comment/enable-discussions_hu_3fb990e06545034e.png 480w, /images/hugo-giscus-comment/enable-discussions_hu_51c882195f5f4907.png 800w, /images/hugo-giscus-comment/enable-discussions_hu_792771171b7d367b.png 1024w, /images/hugo-giscus-comment/enable-discussions_hu_65fb2c47bfd86e8e.png 1280w" sizes="(max-width: 768px) 100vw, 768px"
 	loading="lazy"
+	decoding="async"
 	
 		alt="在 GitHub 仓库设置中开启 Discussions"
 	
 	
-></p>
+		class="gallery-image" 
+		data-flex-grow="109"
+		data-flex-basis="263px"
+	
+>
+</p>
 <p>第二步，打开 <a class="link" href="https://github.com/apps/giscus"  target="_blank" rel="noopener"
     >giscus App 安装页面</a>，点击 <code>Install</code>，选择自己的仓库并授权。这里要选准仓库，我这边用的是 <code>AndyFanEEE/AndyFanEEE.github.io</code>，因为评论数据最后就会进这个仓库的 Discussions。</p>
 <p>第三步，访问 <a class="link" href="https://giscus.app/zh-CN"  target="_blank" rel="noopener"
     >Giscus 官网</a>，按页面提示开始生成配置。仓库这里填自己的 GitHub Pages 仓库地址，下面如果出现绿色对勾，就说明仓库公开、App 安装、Discussions 开启这几件事都过关了。</p>
-<p><img src="/images/hugo-giscus-comment/giscus-repository.png"
-	
-	
-	
+<p><img src="/images/hugo-giscus-comment/giscus-repository_hu_6bc857c947ce53ef.png"
+	width="1137"
+	height="1150"
+	srcset="/images/hugo-giscus-comment/giscus-repository_hu_ea724b71a95e82fd.png 480w, /images/hugo-giscus-comment/giscus-repository_hu_9d18001150137df7.png 800w, /images/hugo-giscus-comment/giscus-repository_hu_6bc857c947ce53ef.png 1024w" sizes="(max-width: 768px) 100vw, 768px"
 	loading="lazy"
+	decoding="async"
 	
 		alt="在 Giscus 官网填写仓库并选择 pathname 映射"
 	
 	
-></p>
+		class="gallery-image" 
+		data-flex-grow="98"
+		data-flex-basis="237px"
+	
+>
+</p>
 <p>这里我选择的是 <code>pathname</code> 映射，也就是用文章路径来对应 Discussion。这样不同文章会对应不同评论串，不会出现“SQL 注入文章下面讨论 Hugo 评论区”的奇怪场面。</p>
 <p>接着选择 Discussion 分类。我这里选的是 <code>General</code>，也勾上了“只搜索该分类中的 discussion”。这样 Giscus查找和创建评论串时范围更明确。</p>
-<p><img src="/images/hugo-giscus-comment/giscus-category-theme.png"
-	
-	
-	
+<p><img src="/images/hugo-giscus-comment/giscus-category-theme_hu_9cc1345dc36710fb.png"
+	width="1135"
+	height="975"
+	srcset="/images/hugo-giscus-comment/giscus-category-theme_hu_f8c90c81644a493.png 480w, /images/hugo-giscus-comment/giscus-category-theme_hu_747caeda49f176a9.png 800w, /images/hugo-giscus-comment/giscus-category-theme_hu_9cc1345dc36710fb.png 1024w" sizes="(max-width: 768px) 100vw, 768px"
 	loading="lazy"
+	decoding="async"
 	
 		alt="选择 Discussion 分类和评论区主题"
 	
 	
-></p>
+		class="gallery-image" 
+		data-flex-grow="116"
+		data-flex-basis="279px"
+	
+>
+</p>
 <p>继续往下选主题。我这里浅色用 <code>light</code>，深色用 <code>dark_dimmed</code>，后面再配合站点的明暗模式切换。点完这些选项后，Giscus 会在页面底部生成一段 <code>&lt;script&gt;</code>。</p>
-<p><img src="/images/hugo-giscus-comment/giscus-script.png"
-	
-	
-	
+<p><img src="/images/hugo-giscus-comment/giscus-script_hu_8a6a670a2c61c46f.png"
+	width="1129"
+	height="709"
+	srcset="/images/hugo-giscus-comment/giscus-script_hu_30a66600320bdc34.png 480w, /images/hugo-giscus-comment/giscus-script_hu_7eb4bb53a327984.png 800w, /images/hugo-giscus-comment/giscus-script_hu_8a6a670a2c61c46f.png 1024w" sizes="(max-width: 768px) 100vw, 768px"
 	loading="lazy"
+	decoding="async"
 	
 		alt="Giscus 生成的脚本配置"
 	
 	
-></p>
+		class="gallery-image" 
+		data-flex-grow="159"
+		data-flex-basis="382px"
+	
+>
+</p>
 <p>这段脚本里最重要的是这几个字段：</p>
 <ul>
 <li><code>data-repo</code></li>
@@ -1180,6 +1204,7 @@
   @font-face {
     font-family: '狮尾体';
     src: url(https://AndyFanEEE.github.io/font/SweiHalfMoonCJKsc-Medium.ttf) format('truetype');
+    font-display: swap;
   }
 
   :root {
@@ -1387,68 +1412,66 @@
         document.body.appendChild(aplayerContainer);
         
         try {
-            var myPlayer = new APlayer({
-                container: aplayerContainer,
-                fixed: true,
-                lrcType: 3,
-                audio: [
+            var audio = [
                     {
                         name: 'Lemon',
                         artist: '米津玄師',
                         url: encodeURI('/music/Lemon - 米津玄师/Lemon.mp3'),
-                        cover: encodeURI('/music/Lemon - 米津玄师/Lemon.mp3'),
                         lrc: encodeURI('/music/Lemon - 米津玄师/Lemon-米津玄師-歌词.lrc')
                     },
                     {
                         name: 'Oz.',
                         artist: 'yama',
                         url: encodeURI('/music/Oz. - yama/Oz.mp3'),
-                        cover: encodeURI('/music/Oz. - yama/Oz.mp3'),
                         lrc: encodeURI('/music/Oz. - yama/Oz.-yama-歌词.lrc')
                     },
                     {
                         name: 'Walking with you',
                         artist: 'Novelbright',
                         url: encodeURI('/music/Walking with you - Novelbright/Novelbright - Walking with you.mp3'),
-                        cover: encodeURI('/music/Walking with you - Novelbright/Novelbright - Walking with you.mp3'),
                         lrc: encodeURI('/music/Walking with you - Novelbright/Walking with you-Novelbright-歌词.lrc')
                     },
                     {
                         name: '夏実',
                         artist: 'AKASAKI',
                         url: encodeURI('/music/夏実 - AKASAKI/夏実 .mp3'),
-                        cover: encodeURI('/music/夏実 - AKASAKI/夏実 .mp3'),
                         lrc: encodeURI('/music/夏実 - AKASAKI/夏実-AKASAKI-歌词.lrc')
                     },
                     {
                         name: '派对动物',
                         artist: '五月天',
                         url: encodeURI('/music/派对动物 - 五月天/派对动物.mp3'),
-                        cover: encodeURI('/music/派对动物 - 五月天/派对动物.mp3'),
                         lrc: encodeURI('/music/派对动物 - 五月天/派对动物-五月天-歌词.lrc')
                     },
                     {
                         name: '灰色と青',
                         artist: '米津玄師 & 菅田将暉',
                         url: encodeURI('/music/灰色と青 - 米津玄师&菅田将暉/灰色と青.MP3'),
-                        cover: encodeURI('/music/灰色と青 - 米津玄师&菅田将暉/灰色と青.MP3'),
                         lrc: encodeURI('/music/灰色と青 - 米津玄师&菅田将暉/灰色と青-菅田将暉&米津玄師-歌词.lrc')
                     },
                     {
                         name: '空想フォレスト',
                         artist: '伊東歌詞太郎',
                         url: encodeURI('/music/空想フォレスト - 伊東歌詞太郎/空想フォレスト.mp3'),
-                        cover: encodeURI('/music/空想フォレスト - 伊東歌詞太郎/空想フォレスト.mp3'),
                         lrc: encodeURI('/music/空想フォレスト - 伊東歌詞太郎/空想フォレスト-伊東歌詞太郎-歌词.lrc')
                     },
                     {
                         name: '老人と海',
                         artist: 'ヨルシカ',
                         url: encodeURI('/music/老人と海 - ヨルシカ/老人与海.mp3'),
-                        cover: encodeURI('/music/老人と海 - ヨルシカ/老人与海.mp3'),
                         lrc: encodeURI('/music/老人と海 - ヨルシカ/老人と海-ヨルシカ-歌词.lrc')
                     }
-                ]
+            ];
+
+            audio.forEach(function (track) {
+                delete track.cover;
+            });
+
+            var myPlayer = new APlayer({
+                container: aplayerContainer,
+                fixed: true,
+                lrcType: 3,
+                audio: audio
             });
             
             window.myPlayer = myPlayer;

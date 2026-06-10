@@ -87,53 +87,77 @@
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;不过在填配置之前GitHub那边要先准备好。&lt;/p&gt;
 &lt;p&gt;第一步，访问自己的 GitHub 仓库，在 &lt;code&gt;Settings&lt;/code&gt; 里找到 &lt;code&gt;Features&lt;/code&gt;，把 &lt;code&gt;Discussions&lt;/code&gt; 打开。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://AndyFanEEE.github.io/images/hugo-giscus-comment/enable-discussions.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://AndyFanEEE.github.io/images/hugo-giscus-comment/enable-discussions_hu_65fb2c47bfd86e8e.png&#34;
+	width=&#34;1392&#34;
+	height=&#34;1266&#34;
+	srcset=&#34;https://AndyFanEEE.github.io/images/hugo-giscus-comment/enable-discussions_hu_3fb990e06545034e.png 480w, https://AndyFanEEE.github.io/images/hugo-giscus-comment/enable-discussions_hu_51c882195f5f4907.png 800w, https://AndyFanEEE.github.io/images/hugo-giscus-comment/enable-discussions_hu_792771171b7d367b.png 1024w, https://AndyFanEEE.github.io/images/hugo-giscus-comment/enable-discussions_hu_65fb2c47bfd86e8e.png 1280w&#34; sizes=&#34;(max-width: 768px) 100vw, 768px&#34;
 	loading=&#34;lazy&#34;
+	decoding=&#34;async&#34;
 	
 		alt=&#34;在 GitHub 仓库设置中开启 Discussions&#34;
 	
 	
-&gt;&lt;/p&gt;
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;109&#34;
+		data-flex-basis=&#34;263px&#34;
+	
+&gt;
+&lt;/p&gt;
 &lt;p&gt;第二步，打开 &lt;a class=&#34;link&#34; href=&#34;https://github.com/apps/giscus&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;giscus App 安装页面&lt;/a&gt;，点击 &lt;code&gt;Install&lt;/code&gt;，选择自己的仓库并授权。这里要选准仓库，我这边用的是 &lt;code&gt;AndyFanEEE/AndyFanEEE.github.io&lt;/code&gt;，因为评论数据最后就会进这个仓库的 Discussions。&lt;/p&gt;
 &lt;p&gt;第三步，访问 &lt;a class=&#34;link&#34; href=&#34;https://giscus.app/zh-CN&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Giscus 官网&lt;/a&gt;，按页面提示开始生成配置。仓库这里填自己的 GitHub Pages 仓库地址，下面如果出现绿色对勾，就说明仓库公开、App 安装、Discussions 开启这几件事都过关了。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://AndyFanEEE.github.io/images/hugo-giscus-comment/giscus-repository.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://AndyFanEEE.github.io/images/hugo-giscus-comment/giscus-repository_hu_6bc857c947ce53ef.png&#34;
+	width=&#34;1137&#34;
+	height=&#34;1150&#34;
+	srcset=&#34;https://AndyFanEEE.github.io/images/hugo-giscus-comment/giscus-repository_hu_ea724b71a95e82fd.png 480w, https://AndyFanEEE.github.io/images/hugo-giscus-comment/giscus-repository_hu_9d18001150137df7.png 800w, https://AndyFanEEE.github.io/images/hugo-giscus-comment/giscus-repository_hu_6bc857c947ce53ef.png 1024w&#34; sizes=&#34;(max-width: 768px) 100vw, 768px&#34;
 	loading=&#34;lazy&#34;
+	decoding=&#34;async&#34;
 	
 		alt=&#34;在 Giscus 官网填写仓库并选择 pathname 映射&#34;
 	
 	
-&gt;&lt;/p&gt;
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;98&#34;
+		data-flex-basis=&#34;237px&#34;
+	
+&gt;
+&lt;/p&gt;
 &lt;p&gt;这里我选择的是 &lt;code&gt;pathname&lt;/code&gt; 映射，也就是用文章路径来对应 Discussion。这样不同文章会对应不同评论串，不会出现“SQL 注入文章下面讨论 Hugo 评论区”的奇怪场面。&lt;/p&gt;
 &lt;p&gt;接着选择 Discussion 分类。我这里选的是 &lt;code&gt;General&lt;/code&gt;，也勾上了“只搜索该分类中的 discussion”。这样 Giscus查找和创建评论串时范围更明确。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://AndyFanEEE.github.io/images/hugo-giscus-comment/giscus-category-theme.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://AndyFanEEE.github.io/images/hugo-giscus-comment/giscus-category-theme_hu_9cc1345dc36710fb.png&#34;
+	width=&#34;1135&#34;
+	height=&#34;975&#34;
+	srcset=&#34;https://AndyFanEEE.github.io/images/hugo-giscus-comment/giscus-category-theme_hu_f8c90c81644a493.png 480w, https://AndyFanEEE.github.io/images/hugo-giscus-comment/giscus-category-theme_hu_747caeda49f176a9.png 800w, https://AndyFanEEE.github.io/images/hugo-giscus-comment/giscus-category-theme_hu_9cc1345dc36710fb.png 1024w&#34; sizes=&#34;(max-width: 768px) 100vw, 768px&#34;
 	loading=&#34;lazy&#34;
+	decoding=&#34;async&#34;
 	
 		alt=&#34;选择 Discussion 分类和评论区主题&#34;
 	
 	
-&gt;&lt;/p&gt;
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;116&#34;
+		data-flex-basis=&#34;279px&#34;
+	
+&gt;
+&lt;/p&gt;
 &lt;p&gt;继续往下选主题。我这里浅色用 &lt;code&gt;light&lt;/code&gt;，深色用 &lt;code&gt;dark_dimmed&lt;/code&gt;，后面再配合站点的明暗模式切换。点完这些选项后，Giscus 会在页面底部生成一段 &lt;code&gt;&amp;lt;script&amp;gt;&lt;/code&gt;。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://AndyFanEEE.github.io/images/hugo-giscus-comment/giscus-script.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://AndyFanEEE.github.io/images/hugo-giscus-comment/giscus-script_hu_8a6a670a2c61c46f.png&#34;
+	width=&#34;1129&#34;
+	height=&#34;709&#34;
+	srcset=&#34;https://AndyFanEEE.github.io/images/hugo-giscus-comment/giscus-script_hu_30a66600320bdc34.png 480w, https://AndyFanEEE.github.io/images/hugo-giscus-comment/giscus-script_hu_7eb4bb53a327984.png 800w, https://AndyFanEEE.github.io/images/hugo-giscus-comment/giscus-script_hu_8a6a670a2c61c46f.png 1024w&#34; sizes=&#34;(max-width: 768px) 100vw, 768px&#34;
 	loading=&#34;lazy&#34;
+	decoding=&#34;async&#34;
 	
 		alt=&#34;Giscus 生成的脚本配置&#34;
 	
 	
-&gt;&lt;/p&gt;
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;159&#34;
+		data-flex-basis=&#34;382px&#34;
+	
+&gt;
+&lt;/p&gt;
 &lt;p&gt;这段脚本里最重要的是这几个字段：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;data-repo&lt;/code&gt;&lt;/li&gt;

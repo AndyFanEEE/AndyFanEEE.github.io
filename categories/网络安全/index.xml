@@ -791,32 +791,44 @@ $$&lt;p&gt;其中 $z$ 是最后一层全连接层的输出，$\sigma(z)$ 把任�
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;对应的可视化热力图如下：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://AndyFanEEE.github.io/images/confusion_matrix.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://AndyFanEEE.github.io/images/confusion_matrix_hu_e9cb31f9847263c7.png&#34;
+	width=&#34;753&#34;
+	height=&#34;734&#34;
+	srcset=&#34;https://AndyFanEEE.github.io/images/confusion_matrix_hu_e9cb31f9847263c7.png 480w&#34; sizes=&#34;(max-width: 768px) 100vw, 768px&#34;
 	loading=&#34;lazy&#34;
+	decoding=&#34;async&#34;
 	
 		alt=&#34;混淆矩阵&#34;
 	
 	
-&gt;&lt;/p&gt;
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;102&#34;
+		data-flex-basis=&#34;246px&#34;
+	
+&gt;
+&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;3848（TN）&lt;/strong&gt;：正常请求被正确识别，占正常样本的 99.87%。这意味着正常操作请求几乎不会被误拦。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;5（FP）&lt;/strong&gt;：5条正常请求被误判为攻击，误报率约 0.13%。在 3853 条正常请求中只有5条误报。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;19（FN）&lt;/strong&gt;：19 条攻击漏判为正常，漏报率 ≈ 0.84%，是需要关注的指标。意味着每 100 条攻击中大概有 1 条会被漏判为正常。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;2240（TP）&lt;/strong&gt;：2240 条攻击被正确拦截，召回率 99.16%。绝大多数攻击都能被挡住。&lt;/p&gt;
 &lt;h3 id=&#34;roc-曲线&#34;&gt;ROC 曲线
 &lt;/h3&gt;&lt;p&gt;ROC 曲线展示了模型在不同阈值下的真阳性率（TPR）和假阳性率（FPR）之间的权衡：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://AndyFanEEE.github.io/images/roc_curve.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://AndyFanEEE.github.io/images/roc_curve_hu_4a6145c09390a775.png&#34;
+	width=&#34;884&#34;
+	height=&#34;734&#34;
+	srcset=&#34;https://AndyFanEEE.github.io/images/roc_curve_hu_fefd935e8046a7b8.png 480w, https://AndyFanEEE.github.io/images/roc_curve_hu_4a6145c09390a775.png 800w&#34; sizes=&#34;(max-width: 768px) 100vw, 768px&#34;
 	loading=&#34;lazy&#34;
+	decoding=&#34;async&#34;
 	
 		alt=&#34;ROC 曲线&#34;
 	
 	
-&gt;&lt;/p&gt;
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;120&#34;
+		data-flex-basis=&#34;289px&#34;
+	
+&gt;
+&lt;/p&gt;
 &lt;p&gt;AUC = 0.9993，这个数值非常接近 1，说明在几乎所有判定阈值下该模型都可以同时保持高召回率和极低的误报率——正常请求和攻击请求在概率分布上基本没有重叠，区分能力很强。从图中可以看到，模型的 ROC 曲线几乎贴着左上角，远优于随机分类器（虚线）。&lt;/p&gt;
 &lt;hr&gt;
 &lt;h2 id=&#34;踩坑记录&#34;&gt;踩坑记录
