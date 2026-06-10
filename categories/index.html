@@ -119,15 +119,36 @@
     }
     
     [data-scheme="light"] body {
-        background: url(/3ec4073c06bf809a74da7fbd762c9b8.jpg) no-repeat center center !important;
+        background-color: #f5f5fa !important;
+        background-repeat: no-repeat !important;
+        background-position: center center !important;
         background-size: cover !important;
         background-attachment: fixed !important;
     }
     
     [data-scheme="dark"] body {
-        background: url(/MNB.jpg) no-repeat center center !important;
+        background-color: #1a1a1a !important;
+        background-repeat: no-repeat !important;
+        background-position: center center !important;
         background-size: cover !important;
         background-attachment: fixed !important;
+    }
+
+    [data-scheme="light"] body.lazy-background-loaded {
+        background-image: url(/3ec4073c06bf809a74da7fbd762c9b8.jpg) !important;
+    }
+    
+    [data-scheme="dark"] body.lazy-background-loaded {
+        background-image: url(/MNB.jpg) !important;
+    }
+
+    .site-logo.lazy-avatar {
+        opacity: 0;
+        transition: opacity 0.25s ease;
+    }
+
+    .site-logo.lazy-avatar.is-loaded {
+        opacity: 1;
     }
     
     .mode-text-light,
@@ -292,8 +313,14 @@
                     
                     
                         
-                        <img src="/img/avatar_hu_75a35bf455b84259.png" width="300"
-                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3C/svg%3E"
+                            data-src="/img/avatar_hu_75a35bf455b84259.png" width="300"
+                            height="300" class="site-logo lazy-avatar" loading="lazy"
+                            decoding="async" alt="Avatar">
+                        <noscript>
+                            <img src="/img/avatar_hu_75a35bf455b84259.png" width="300"
+                                height="300" class="site-logo" alt="Avatar">
+                        </noscript>
                     
                 
                 </a>
@@ -841,6 +868,75 @@
             setTimeout(hideLoading, 1200);
         });
     }
+</script>
+
+<script>
+    (function () {
+        function runWhenIdle(callback) {
+            var run = function () {
+                if ('requestIdleCallback' in window) {
+                    window.requestIdleCallback(callback, { timeout: 1500 });
+                } else {
+                    setTimeout(callback, 1000);
+                }
+            };
+
+            if (document.readyState === 'complete') {
+                run();
+            } else {
+                window.addEventListener('load', run, { once: true });
+            }
+        }
+
+        function loadLazyBackground() {
+            if (document.body) {
+                document.body.classList.add('lazy-background-loaded');
+            }
+        }
+
+        function loadLazyAvatars(root) {
+            var scope = root || document;
+            var avatars = scope.querySelectorAll('img.lazy-avatar[data-src]');
+
+            avatars.forEach(function (avatar) {
+                if (avatar.dataset.loading === 'true' || avatar.dataset.loaded === 'true') {
+                    return;
+                }
+
+                var src = avatar.dataset.src;
+                if (!src) {
+                    return;
+                }
+
+                avatar.dataset.loading = 'true';
+
+                var image = new Image();
+                image.onload = function () {
+                    avatar.src = src;
+                    avatar.classList.add('is-loaded');
+                    avatar.dataset.loaded = 'true';
+                    delete avatar.dataset.loading;
+                };
+                image.onerror = function () {
+                    avatar.src = src;
+                    avatar.classList.add('is-loaded');
+                    avatar.dataset.loaded = 'true';
+                    delete avatar.dataset.loading;
+                };
+                image.src = src;
+            });
+        }
+
+        function loadLazyAssets() {
+            loadLazyBackground();
+            loadLazyAvatars(document);
+        }
+
+        runWhenIdle(loadLazyAssets);
+        document.addEventListener('pjax:complete', function () {
+            runWhenIdle(loadLazyAssets);
+        });
+    })();
 </script>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
