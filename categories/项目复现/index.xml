@@ -7,12 +7,1750 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
         <copyright>Fan&#39;s Blog</copyright>
-        <lastBuildDate>Tue, 21 Apr 2026 17:07:15 +0800</lastBuildDate><atom:link href="https://AndyFanEEE.github.io/categories/%E9%A1%B9%E7%9B%AE%E5%A4%8D%E7%8E%B0/index.xml" rel="self" type="application/rss+xml" /><item>
-        <title>基于机器学习的击键动力学的身份认证系统实现</title>
-        <link>https://AndyFanEEE.github.io/p/%E5%9F%BA%E4%BA%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E5%87%BB%E9%94%AE%E5%8A%A8%E5%8A%9B%E5%AD%A6%E7%9A%84%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0/</link>
+        <lastBuildDate>Fri, 10 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://AndyFanEEE.github.io/categories/%E9%A1%B9%E7%9B%AE%E5%A4%8D%E7%8E%B0/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>基于千问 Qwen-VL 的 Deepfake 检测中等复现：VERITAS-style Prompt 实验</title>
+        <link>https://AndyFanEEE.github.io/p/%E5%9F%BA%E4%BA%8E%E5%8D%83%E9%97%AE-qwen-vl-%E7%9A%84-deepfake-%E6%A3%80%E6%B5%8B%E4%B8%AD%E7%AD%89%E5%A4%8D%E7%8E%B0veritas-style-prompt-%E5%AE%9E%E9%AA%8C/</link>
+        <pubDate>Fri, 10 Jul 2026 00:00:00 +0000</pubDate>
+        
+        <guid>https://AndyFanEEE.github.io/p/%E5%9F%BA%E4%BA%8E%E5%8D%83%E9%97%AE-qwen-vl-%E7%9A%84-deepfake-%E6%A3%80%E6%B5%8B%E4%B8%AD%E7%AD%89%E5%A4%8D%E7%8E%B0veritas-style-prompt-%E5%AE%9E%E9%AA%8C/</guid>
+        <description>&lt;h2 id=&#34;前言&#34;&gt;前言
+&lt;/h2&gt;&lt;p&gt;&lt;span style=&#34;color: #999;&#34;&gt;这篇文章记录的是 VERITAS-MINI 复现项目的第二阶段：在完成 ResNet18 和 CLIP baseline 之后，进一步使用千问 Qwen-VL 做多模态大模型推理实验。这个阶段不训练大模型，也不微调模型，而是通过 prompt 复现 VERITAS 论文中 pattern-aware reasoning 的核心思想。&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;需要特别说明的是：本文不是完整复现 VERITAS，而是对其 pattern-aware reasoning 思想做 prompt-level reproduction。&lt;/strong&gt; 我们没有做：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;SFT
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;MiPO
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;P-GRPO
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;完整 HydraFake 四层评估
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;完整 VERITAS 模型训练
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;因此，本文更准确地说是 VERITAS-style 中等复现，而不是 VERITAS 全流程复现。&lt;/p&gt;
+&lt;p&gt;上一篇里，我已经把最小复现流程跑通了：HydraFake 数据检查、train / val / test 划分、ResNet18 baseline、CLIP + Logistic Regression baseline。&lt;/p&gt;
+&lt;p&gt;到那一步为止，整个项目还是比较传统的图像分类任务：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;输入图片 → 模型 → 输出 real / fake
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;但 VERITAS 论文真正有意思的地方，不只是判断真假，而是让多模态大模型按照一种更接近&amp;quot;取证分析&amp;quot;的方式推理。它希望模型不是只给一个标签，而是先观察图像、规划检查区域、分析证据、反思判断，最后再给出答案。&lt;/p&gt;
+&lt;p&gt;所以第二篇的重点换成了多模态大模型。&lt;/p&gt;
+&lt;p&gt;这次我使用的是千问 Qwen-VL，通过 DashScope 的 OpenAI-compatible 接口调用。目标不是完整复现 VERITAS 的训练流程，而是做一个 prompt-level 中等复现：比较 basic prompt、CoT prompt 和 VERITAS-style prompt 在 Deepfake 检测任务上的表现。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;为什么要做这一阶段&#34;&gt;为什么要做这一阶段
+&lt;/h2&gt;&lt;p&gt;第一阶段已经有两个 baseline：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;模型&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;测试规模&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;Accuracy&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;Macro F1&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;ResNet18&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;600&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.8400&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.8400&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;CLIP + Logistic Regression&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;600&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.7383&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.7383&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;这两个结果说明，在当前 HydraFake val 子集重划分上，传统监督模型是有效的。尤其是 ResNet18，600 张测试图上能达到 84.0% 准确率。&lt;/p&gt;
+&lt;p&gt;但这还没有触碰 VERITAS 的核心问题。&lt;/p&gt;
+&lt;p&gt;VERITAS 强调的是 pattern-aware reasoning，也就是模型要围绕伪造模式进行推理。比如它应该关注：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;面部结构是否自然&lt;/li&gt;
+&lt;li&gt;皮肤纹理是否过于平滑&lt;/li&gt;
+&lt;li&gt;眼睛反光是否一致&lt;/li&gt;
+&lt;li&gt;牙齿和头发是否有局部异常&lt;/li&gt;
+&lt;li&gt;面部边界是否融合自然&lt;/li&gt;
+&lt;li&gt;光照和阴影是否匹配&lt;/li&gt;
+&lt;li&gt;背景是否存在生成痕迹&lt;/li&gt;
+&lt;li&gt;压缩伪影和生成伪影是否异常&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这和普通分类器的输出不太一样。&lt;/p&gt;
+&lt;p&gt;普通分类器只告诉我：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;fake
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;但 VERITAS-style 推理更希望模型说清楚：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;我先看到了什么
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;我打算检查哪里
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;具体证据是什么
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;我是否需要修正初始判断
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;最后答案是什么
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;所以这一阶段的目标不是追求最高准确率，而是观察多模态模型在结构化 prompt 下的推理行为。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;实验设置&#34;&gt;实验设置
+&lt;/h2&gt;&lt;h3 id=&#34;模型选择&#34;&gt;模型选择
+&lt;/h3&gt;&lt;p&gt;这次使用的是千问多模态模型：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;model = qwen-vl-plus
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;接口使用 DashScope 的 OpenAI-compatible 模式：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;OPENAI_BASE_URL=你的阿里云百炼 OpenAI-compatible Base URL
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;为了安全和通用，具体的 workspace URL 不应公开。配置时请替换为你自己的阿里云百炼 Base URL。&lt;/p&gt;
+&lt;p&gt;API key 没有写进代码，而是放在 &lt;code&gt;.env&lt;/code&gt; 或环境变量中：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;OPENAI_API_KEY=你的 DashScope API Key
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;MLLM_MODEL=qwen-vl-plus
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;调用脚本是：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;src/mllm/run_mllm_prompt_eval.py
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这个脚本支持：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;--dry_run&lt;/code&gt;：只检查将要处理哪些样本，不调用 API&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;--resume&lt;/code&gt;：跳过已经成功完成的样本&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;--output_csv&lt;/code&gt;：指定输出文件，避免不同实验混在一起&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;--per_class_limit&lt;/code&gt;：每个类别分别取 N 张样本&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;--prompt_type&lt;/code&gt;：选择 basic、cot 或 veritas_style&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;为什么要加-per_class_limit&#34;&gt;为什么要加 per_class_limit
+&lt;/h3&gt;&lt;p&gt;一开始我用的是：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;-limit&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;5&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;后来发现一个问题：&lt;code&gt;mllm_eval_subset.csv&lt;/code&gt; 前面几条刚好都是 fake 图片。如果直接取前 5 条，小样本实验就不是 real/fake 平衡样本。&lt;/p&gt;
+&lt;p&gt;这会让结果很难解释。&lt;/p&gt;
+&lt;p&gt;所以后面给脚本加了：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;-per_class_limit&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;例如：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;-per_class_limit&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;5&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;表示从 fake 里取 5 张，从 real 里取 5 张，总共 10 张。&lt;/p&gt;
+&lt;p&gt;最终 balanced v4 实验使用的是：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;fake: 10
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;real: 10
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;total: 20
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;样本不大，但适合控制 API 成本，也方便观察 prompt 行为。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;三种-prompt-设计&#34;&gt;三种 prompt 设计
+&lt;/h2&gt;&lt;p&gt;这次比较了三种 prompt。&lt;/p&gt;
+&lt;h3 id=&#34;basic-prompt&#34;&gt;basic prompt
+&lt;/h3&gt;&lt;p&gt;basic prompt 很简单，只要求模型判断图片是真实还是伪造，并输出：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;real
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;或：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;fake
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;它的作用是作为最简单的多模态判断 baseline。&lt;/p&gt;
+&lt;h3 id=&#34;cot-prompt&#34;&gt;CoT prompt
+&lt;/h3&gt;&lt;p&gt;CoT prompt 要求模型先 step by step 分析，再给最终答案。&lt;/p&gt;
+&lt;p&gt;这个 prompt 的目的，是观察普通逐步推理是否能提升判断效果。&lt;/p&gt;
+&lt;h3 id=&#34;veritas-style-prompt&#34;&gt;VERITAS-style prompt
+&lt;/h3&gt;&lt;p&gt;第三种是 VERITAS-style prompt，也是这一阶段的重点。&lt;/p&gt;
+&lt;p&gt;它要求模型严格按照下面格式输出：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&amp;lt;fast&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;...
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&amp;lt;/fast&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&amp;lt;planning&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;...
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&amp;lt;/planning&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&amp;lt;reasoning&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;...
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&amp;lt;/reasoning&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&amp;lt;reflection&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;...
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&amp;lt;/reflection&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&amp;lt;conclusion&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;...
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&amp;lt;/conclusion&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&amp;lt;answer&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;real 或 fake
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&amp;lt;/answer&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这六个部分分别对应：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;标签&lt;/th&gt;
+					&lt;th&gt;含义&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;&amp;lt;fast&amp;gt;&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;第一印象判断&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;&amp;lt;planning&amp;gt;&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;计划检查哪些区域和线索&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;&amp;lt;reasoning&amp;gt;&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;具体视觉证据分析&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;&amp;lt;reflection&amp;gt;&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;重新审视初始判断&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;&amp;lt;conclusion&amp;gt;&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;总结关键证据&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;&amp;lt;answer&amp;gt;&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;输出最终 real/fake 答案&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;为了让输出稳定，我给 prompt 加了严格规则：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;You must output exactly six sections and nothing else.
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Do not omit any section.
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Do not omit any opening or closing tag.
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Do not output markdown.
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;The &amp;lt;answer&amp;gt; section must contain exactly one word: real or fake.
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这样后续脚本才能稳定解析结果。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;工程改动&#34;&gt;工程改动
+&lt;/h2&gt;&lt;p&gt;这一阶段不只是写 prompt，还补了不少工程逻辑。&lt;/p&gt;
+&lt;h3 id=&#34;1-接入真实-api&#34;&gt;1. 接入真实 API
+&lt;/h3&gt;&lt;p&gt;原来的 &lt;code&gt;run_mllm_prompt_eval.py&lt;/code&gt; 只是一个 dry-run 框架。后面改成可以真正调用 OpenAI-compatible API。&lt;/p&gt;
+&lt;p&gt;调用时会读取本地图片，转成 base64 data URL，再通过 &lt;code&gt;image_url&lt;/code&gt; 传给模型。&lt;/p&gt;
+&lt;p&gt;为了兼容千问，调用方式改成 Chat Completions 风格：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;client.chat.completions.create(...)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;2-结果文件单独保存&#34;&gt;2. 结果文件单独保存
+&lt;/h3&gt;&lt;p&gt;一开始 mock 结果和真实 API 结果混在一个 CSV 里，后面发现这样很容易污染正式实验。&lt;/p&gt;
+&lt;p&gt;所以每次正式实验都单独指定输出文件，例如：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;outputs/mllm/qwen_vl_plus_balanced_v4_prompt_results.csv
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;解析结果和指标也单独保存：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;outputs/mllm/qwen_vl_plus_balanced_v4_predictions_parsed.csv
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;outputs/mllm/qwen_vl_plus_balanced_v4_metrics_detailed.csv
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;3-加强空输出处理&#34;&gt;3. 加强空输出处理
+&lt;/h3&gt;&lt;p&gt;真实 API 调用时，不能默认只要请求完成就是成功。&lt;/p&gt;
+&lt;p&gt;如果模型返回空字符串，后续解析会得到 &lt;code&gt;unknown&lt;/code&gt;。所以脚本里加了判断：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;raw_output 为空 → status = empty_output
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;raw_output 非空 → status = success
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;API 抛异常 → status = error
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;同时，&lt;code&gt;--resume&lt;/code&gt; 只跳过满足下面条件的记录：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;status = success
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;raw_output 非空
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;如果之前是 error、empty_output，或者 success 但内容为空，就会重新调用。&lt;/p&gt;
+&lt;h3 id=&#34;4-补充评估指标&#34;&gt;4. 补充评估指标
+&lt;/h3&gt;&lt;p&gt;最开始的 metrics 只有：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;prompt_type,total,accuracy,unknown_count,format_valid_rate
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;后面发现不够用，因为只看 accuracy 看不出模型偏向。&lt;/p&gt;
+&lt;p&gt;所以又加了：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;fake_precision
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;fake_recall
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;fake_f1
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;real_precision
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;real_recall
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;real_f1
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;macro_f1
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;confusion_matrix
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;混淆矩阵固定使用这个顺序：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;[[true_fake_pred_fake, true_fake_pred_real],
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; [true_real_pred_fake, true_real_pred_real]]
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这样就能看出模型到底是偏向 real，还是偏向 fake。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;第一次问题格式不稳定&#34;&gt;第一次问题：格式不稳定
+&lt;/h2&gt;&lt;p&gt;刚开始跑 VERITAS-style prompt 时，模型有时会输出标签外说明，或者没有严格按照六个标签返回。&lt;/p&gt;
+&lt;p&gt;这会导致解析脚本无法稳定判断格式是否合规。&lt;/p&gt;
+&lt;p&gt;所以我先加强格式约束，要求模型只输出六个 XML-like sections，不要输出其他内容。&lt;/p&gt;
+&lt;p&gt;改完后，VERITAS-style prompt 的格式稳定性明显提升。balanced v2 实验中：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;format_valid_rate = 1.0000
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;unknown_count = 0
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这说明格式问题基本解决了。&lt;/p&gt;
+&lt;p&gt;但新的问题很快出现了。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;第二次问题模型过于保守&#34;&gt;第二次问题：模型过于保守
+&lt;/h2&gt;&lt;p&gt;balanced v2 里，VERITAS-style prompt 虽然格式完全合规，但它把 5 张 fake 全部判断成了 real。&lt;/p&gt;
+&lt;p&gt;也就是说，模型很会按格式输出，但判断偏保守。&lt;/p&gt;
+&lt;p&gt;这其实很符合多模态模型的常见倾向：如果图像看起来比较自然，它会倾向说“没有明显伪影，所以是真实图像”。&lt;/p&gt;
+&lt;p&gt;但 Deepfake 检测不能这么做。&lt;/p&gt;
+&lt;p&gt;很多伪造痕迹并不明显，可能只是几个弱线索叠加。比如局部皮肤纹理、发丝边缘、眼睛反光、背景细节、压缩伪影。这些线索单独看都不强，但组合起来可能支持 fake。&lt;/p&gt;
+&lt;p&gt;所以我继续修改 VERITAS-style prompt，加入反保守偏置规则：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Do not assume an image is real simply because it looks natural at first glance.
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Deepfake artifacts can be subtle; multiple weak cues should be considered together.
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Pay special attention to local artifacts rather than only global realism.
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;A realistic-looking image can still be fake.
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Avoid defaulting to real due to lack of obvious artifacts.
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;同时要求：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;In &amp;lt;reflection&amp;gt;, explicitly reconsider whether subtle artifacts may support a fake label.
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;In &amp;lt;conclusion&amp;gt;, state whether the evidence is stronger for real or fake.
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这个修改的目标不是强行让模型多判 fake，而是提醒它不要把“看起来正常”直接当成 real 的证据。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;balanced-v4-实验结果&#34;&gt;balanced v4 实验结果
+&lt;/h2&gt;&lt;p&gt;当前阶段我暂时以 balanced v4 作为主要分析结果。&lt;/p&gt;
+&lt;p&gt;样本规模：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;fake: 10
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;real: 10
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;total: 20
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;三种 prompt 的结果如下：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;prompt&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;Accuracy&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;Macro F1&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;unknown_count&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;format_valid_rate&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;basic&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.6000&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.5604&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;-&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;CoT&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.6500&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.6011&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;-&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;VERITAS-style&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.5500&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.4872&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;1.0000&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;更细的分类指标：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;prompt&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;fake Precision&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;fake Recall&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;fake F1&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;real Precision&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;real Recall&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;real F1&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;basic&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.7500&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.3000&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.4286&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.5625&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.9000&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.6923&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;CoT&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;1.0000&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.3000&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.4615&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.5882&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;1.0000&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.7407&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;VERITAS-style&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.5294&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.9000&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.6667&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.6667&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.2000&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.3077&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;混淆矩阵如下。&lt;/p&gt;
+&lt;p&gt;basic prompt：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;True \ Pred&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;fake&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;real&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;fake&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;3&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;7&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;real&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;1&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;9&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;CoT prompt：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;True \ Pred&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;fake&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;real&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;fake&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;3&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;7&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;real&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;10&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;VERITAS-style prompt：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;True \ Pred&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;fake&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;real&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;fake&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;9&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;1&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;real&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;8&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;2&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;这个结果很直观。&lt;/p&gt;
+&lt;p&gt;basic 和 CoT 都明显偏向 real。尤其是 CoT，10 张 real 全部判对，但 10 张 fake 只识别出 3 张。&lt;/p&gt;
+&lt;p&gt;而加强后的 VERITAS-style prompt 正好反过来。它对 fake 更敏感，10 张 fake 识别出 9 张，fake recall 达到 0.9000。但它也把 8 张 real 误判成 fake，real recall 只有 0.2000。&lt;/p&gt;
+&lt;p&gt;也就是说，prompt 确实改变了模型的判断倾向，但也引入了新的偏置。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;怎么理解这个结果&#34;&gt;怎么理解这个结果
+&lt;/h2&gt;&lt;p&gt;如果只看 accuracy，CoT 是最高的：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;CoT accuracy = 0.6500
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;但如果看类别表现，就会发现 CoT 的问题很明显：它几乎不愿意判 fake。&lt;/p&gt;
+&lt;p&gt;对于 Deepfake 检测来说，这种模型可能会漏掉很多伪造图像。&lt;/p&gt;
+&lt;p&gt;VERITAS-style prompt 则相反。它变得更敏感，能抓到更多 fake，但误报 real 的情况严重。&lt;/p&gt;
+&lt;p&gt;这说明 prompt 像一个旋钮：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;偏保守 → 漏检 fake
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;偏敏感 → 误报 real
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;想要找到中间点，不是简单写一段 prompt 就能解决的。&lt;/p&gt;
+&lt;p&gt;这也解释了为什么 VERITAS 论文不只做 prompt，而是继续引入 SFT、MiPO 和 P-GRPO。因为真正的问题不是“让模型输出六段文字”，而是让模型在结构化推理中保持稳定、准确、不偏向某一类。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;和第一阶段-baseline-的对比&#34;&gt;和第一阶段 baseline 的对比
+&lt;/h2&gt;&lt;p&gt;把目前所有结果放在一起：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;方法&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;测试规模&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;Accuracy&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;Macro F1&lt;/th&gt;
+					&lt;th&gt;说明&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;ResNet18&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;600&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.8400&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.8400&lt;/td&gt;
+					&lt;td&gt;监督训练，当前最小划分上最好&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;CLIP + Logistic Regression&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;600&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.7383&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.7383&lt;/td&gt;
+					&lt;td&gt;frozen features，低于 ResNet18&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Qwen-VL basic&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;20&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.6000&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.5604&lt;/td&gt;
+					&lt;td&gt;偏向 real&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Qwen-VL CoT&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;20&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.6500&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.6011&lt;/td&gt;
+					&lt;td&gt;仍偏向 real&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Qwen-VL VERITAS-style&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;20&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.5500&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.4872&lt;/td&gt;
+					&lt;td&gt;格式稳定，但偏向 fake&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;这里不能直接说 ResNet18 一定强于 Qwen-VL。因为测试规模不同，任务形式也不同。&lt;/p&gt;
+&lt;p&gt;ResNet18 和 CLIP 是在 600 张 test 图上评估。Qwen-VL 只是 20 张小样本 API 实验。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;因此，这张表主要用于展示项目阶段进展，而不是严格公平的模型性能排名。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;但这组结果仍然说明了一个现象：在当前最小复现阶段，传统监督模型的分类结果更稳定；多模态大模型的价值更多体现在解释、推理格式和判断倾向分析上。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;踩坑记录&#34;&gt;踩坑记录
+&lt;/h2&gt;&lt;h3 id=&#34;坑一输出文件不要混用&#34;&gt;坑一：输出文件不要混用
+&lt;/h3&gt;&lt;p&gt;mock 结果、第一次真实 API 结果、balanced 实验结果，一定要分开保存。&lt;/p&gt;
+&lt;p&gt;否则后续解析时会把不同来源的结果混在一起，指标没有意义。&lt;/p&gt;
+&lt;p&gt;后来我统一用这种方式命名：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;qwen_vl_plus_balanced_v4_prompt_results.csv
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;qwen_vl_plus_balanced_v4_predictions_parsed.csv
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;qwen_vl_plus_balanced_v4_metrics_detailed.csv
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;坑二csv-里-raw_output-太长&#34;&gt;坑二：CSV 里 raw_output 太长
+&lt;/h3&gt;&lt;p&gt;模型输出经常包含多行解释。直接用：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Get-Content&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;xxx&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;csv&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Tail&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;20&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;会看到一大段被拆开的文本，不太好读。&lt;/p&gt;
+&lt;p&gt;更适合用：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Import-Csv&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;xxx&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;csv&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Select-Object&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;image_path&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;prompt_type&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;model&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;status&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;error&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这样能直接看每条记录是否成功。&lt;/p&gt;
+&lt;h3 id=&#34;坑三format_valid_rate-高不代表分类好&#34;&gt;坑三：format_valid_rate 高不代表分类好
+&lt;/h3&gt;&lt;p&gt;VERITAS-style prompt 的 &lt;code&gt;format_valid_rate&lt;/code&gt; 达到 1.0，只能说明模型按格式输出了。&lt;/p&gt;
+&lt;p&gt;它不代表模型判断一定正确。&lt;/p&gt;
+&lt;p&gt;balanced v2 就是一个例子：格式完全正确，但 fake 全部被判成 real。后面 prompt 调整后，fake recall 上来了，但 real 还是被误报。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;当前结论&#34;&gt;当前结论
+&lt;/h2&gt;&lt;p&gt;这一阶段没有让 Qwen-VL 在准确率上超过 ResNet18，但它补上了传统 baseline 缺少的一块：结构化解释。&lt;/p&gt;
+&lt;p&gt;从结果看：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;basic prompt 和 CoT prompt 更保守，容易判 real；&lt;/li&gt;
+&lt;li&gt;在 balanced v4 实验中，VERITAS-style prompt 的 &lt;code&gt;format_valid_rate&lt;/code&gt; 达到 1.0；&lt;/li&gt;
+&lt;li&gt;加强伪影约束后，VERITAS-style 对 fake 更敏感；&lt;/li&gt;
+&lt;li&gt;但它也更容易把 real 误判成 fake；&lt;/li&gt;
+&lt;li&gt;prompt 能改变模型倾向，但很难单独保证分类稳定。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;所以我对这一阶段的判断是：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;VERITAS-style prompt 可以复现 pattern-aware reasoning 的外在形式，也能引导模型关注伪造线索。但如果只靠 prompt，不经过训练或偏好优化，很难同时做到高准确率、低偏置和稳定解释。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;这和 VERITAS 论文的设计方向是吻合的。论文没有停留在 prompt 工程，而是继续做 SFT、MiPO 和 P-GRPO，目的就是让模型的推理过程和最终判断都更稳定。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;后续计划&#34;&gt;后续计划
+&lt;/h2&gt;&lt;p&gt;下一步我准备继续做三件事。&lt;/p&gt;
+&lt;p&gt;第一，把 Qwen-VL 的样本规模扩大到 100 张，也就是 fake 50 张、real 50 张。现在 20 张样本只能看趋势，不能代表稳定性能。&lt;/p&gt;
+&lt;p&gt;第二，继续调 VERITAS-style prompt。当前版本 fake recall 高，但 real recall 太低，需要找到一个更平衡的提示方式。&lt;/p&gt;
+&lt;p&gt;第三，下载 HydraFake 的 In-Domain 和 Cross-Domain 测试集。当前所有实验还是基于 val 子集重划分，距离 VERITAS 论文真正关心的泛化评估还有一步。&lt;/p&gt;
+&lt;p&gt;到目前为止，这个项目已经从 CPU baseline 走到了多模态推理阶段。它还不是完整 VERITAS，但已经更接近论文真正想讨论的问题：Deepfake 检测不只是判断真假，还要考虑模型看到了什么、为什么这样判断，以及这种判断能不能泛化到新的伪造方式。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;参考资料&#34;&gt;参考资料
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Tan H, Lan J, Tan Z, et al. VERITAS: Generalizable Deepfake Detection via Pattern-Aware Reasoning. ICLR 2026 submission.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;HydraFake 数据集：https://www.modelscope.cn/datasets/EricTanh/HydraFake&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;阿里云 DashScope / 百炼平台文档：https://help.aliyun.com/zh/model-studio/&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Qwen-VL 模型相关文档：https://help.aliyun.com/zh/model-studio/&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description>
+        </item>
+        <item>
+        <title>基于 VERITAS 的 Deepfake 检测最小复现：HydraFake 数据集与 ResNet18 baseline</title>
+        <link>https://AndyFanEEE.github.io/p/%E5%9F%BA%E4%BA%8E-veritas-%E7%9A%84-deepfake-%E6%A3%80%E6%B5%8B%E6%9C%80%E5%B0%8F%E5%A4%8D%E7%8E%B0hydrafake-%E6%95%B0%E6%8D%AE%E9%9B%86%E4%B8%8E-resnet18-baseline/</link>
+        <pubDate>Sun, 05 Jul 2026 00:00:00 +0000</pubDate>
+        
+        <guid>https://AndyFanEEE.github.io/p/%E5%9F%BA%E4%BA%8E-veritas-%E7%9A%84-deepfake-%E6%A3%80%E6%B5%8B%E6%9C%80%E5%B0%8F%E5%A4%8D%E7%8E%B0hydrafake-%E6%95%B0%E6%8D%AE%E9%9B%86%E4%B8%8E-resnet18-baseline/</guid>
+        <description>&lt;h2 id=&#34;前言&#34;&gt;前言
+&lt;/h2&gt;&lt;p&gt;&lt;span style=&#34;color: #999;&#34;&gt;这篇文章记录的是一次 Deepfake 检测论文的最小复现过程。项目基于 ICLR 2026 论文《VERITAS: Generalizable Deepfake Detection via Pattern-Aware Reasoning》，但目前并不是完整复现 VERITAS 的全部训练流程，而是先做一个 VERITAS-MINI 版本，把数据准备、baseline 训练和测试评估这条流程跑通。&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;一开始看到 VERITAS 这篇论文时，感觉它的切入点比较适合做复现：不是单纯追求某个数据集上的分类准确率，而是强调 Deepfake 检测在真实场景中的泛化能力。现实里伪造图片的来源会不断变化，今天是换脸，明天可能是扩散模型生成的人脸，再往后又可能是商业 App 一键生成的假身份头像。&lt;/p&gt;
+&lt;p&gt;不过完整 VERITAS 的成本比较高，涉及多模态大模型、SFT、MiPO、P-GRPO 等训练流程。对于一个课程项目或者入门复现来说，直接硬做完整版本并不现实。所以我先把目标缩小：基于 HydraFake 数据集做一个小型 real/fake 人脸图像检测任务，先训练 ResNet18 baseline，再准备 CLIP + Logistic Regression baseline。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;项目概述&#34;&gt;项目概述
+&lt;/h2&gt;&lt;h3 id=&#34;为什么做这个&#34;&gt;为什么做这个
+&lt;/h3&gt;&lt;p&gt;Deepfake 检测本质上是判断一张图片或视频是否真实。这个问题现在越来越重要，因为 AI 生成人脸已经足够逼真，可以被用于虚假账号、诈骗头像、社交媒体身份伪装等场景。&lt;/p&gt;
+&lt;p&gt;传统图像分类任务通常只关心“训练集和测试集上准确率高不高”。但 Deepfake 检测更麻烦：模型在见过的伪造方式上表现好，不代表它能识别没见过的生成器。VERITAS 论文比较吸引我的地方就在这里，它强调的是 &lt;strong&gt;generalizable deepfake detection&lt;/strong&gt;，也就是泛化能力。&lt;/p&gt;
+&lt;p&gt;简单说，这个项目想先回答一个小问题：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;如果只用一个基础视觉模型，在 HydraFake 子集上做 real/fake 分类，能做到什么程度？&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;当前复现范围&#34;&gt;当前复现范围
+&lt;/h3&gt;&lt;p&gt;完整 VERITAS 包括：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;HydraFake 数据集构建&lt;/li&gt;
+&lt;li&gt;多层次泛化评估&lt;/li&gt;
+&lt;li&gt;pattern-aware reasoning&lt;/li&gt;
+&lt;li&gt;SFT 监督微调&lt;/li&gt;
+&lt;li&gt;MiPO 偏好优化&lt;/li&gt;
+&lt;li&gt;P-GRPO 强化学习训练&lt;/li&gt;
+&lt;li&gt;多模态大模型推理输出&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这些内容都很重，尤其是后面的大模型训练部分。&lt;/p&gt;
+&lt;p&gt;所以当前项目先做 &lt;strong&gt;VERITAS-MINI 最小复现&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;使用 HydraFake val 子集&lt;/li&gt;
+&lt;li&gt;构建 train / val / test 划分&lt;/li&gt;
+&lt;li&gt;训练 ResNet18 二分类 baseline&lt;/li&gt;
+&lt;li&gt;在 test split 上评估 Accuracy、Precision、Recall、F1 和混淆矩阵&lt;/li&gt;
+&lt;li&gt;准备 CLIP image encoder + Logistic Regression baseline&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;目前已经完成 ResNet18 baseline 的训练和测试，CLIP baseline 脚本已经写好，但还没有正式跑出结果。&lt;/p&gt;
+&lt;h3 id=&#34;技术栈&#34;&gt;技术栈
+&lt;/h3&gt;&lt;table&gt;
+&lt;tr&gt;&lt;td&gt;层次&lt;/td&gt;&lt;td&gt;选型&lt;/td&gt;&lt;td&gt;说明&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;语言&lt;/td&gt;&lt;td&gt;Python 3.10&lt;/td&gt;&lt;td&gt;主要实验代码&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;深度学习&lt;/td&gt;&lt;td&gt;PyTorch + torchvision&lt;/td&gt;&lt;td&gt;训练 ResNet18 baseline&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;传统机器学习&lt;/td&gt;&lt;td&gt;scikit-learn&lt;/td&gt;&lt;td&gt;后续训练 Logistic Regression&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;预训练模型&lt;/td&gt;&lt;td&gt;open_clip_torch&lt;/td&gt;&lt;td&gt;后续提取 CLIP 图像特征&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;数据处理&lt;/td&gt;&lt;td&gt;Pillow / NumPy / pandas&lt;/td&gt;&lt;td&gt;图片检查、特征缓存和指标记录&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;可视化&lt;/td&gt;&lt;td&gt;matplotlib&lt;/td&gt;&lt;td&gt;训练曲线和混淆矩阵&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;项目文件结构&#34;&gt;项目文件结构
+&lt;/h3&gt;&lt;p&gt;当前项目核心结构如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Deepfake/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;├── data/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   ├── hydrafake_val/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   │   ├── fake/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   │   └── real/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   ├── veritas_mini/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   │   ├── train/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   │   ├── val/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   │   └── test/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   └── processed/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│       └── splits/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│           └── veritas_mini_split.csv
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;├── src/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   ├── datasets/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   │   ├── create_veritas_mini_split.py
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   │   └── check_veritas_mini_split.py
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   └── models/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│       ├── train_resnet18.py
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│       ├── evaluate_resnet18.py
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│       └── train_clip_logreg.py
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;├── outputs/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   ├── checkpoints/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   ├── eval/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   ├── figures/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   ├── logs/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   └── clip_features/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;└── docs/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    └── 06_progress_log.md
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id=&#34;背景知识&#34;&gt;背景知识
+&lt;/h2&gt;&lt;h3 id=&#34;deepfake-检测到底在检测什么&#34;&gt;Deepfake 检测到底在检测什么
+&lt;/h3&gt;&lt;p&gt;在这个最小复现里，任务被简化成一个二分类问题：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;real → 真实人脸图片
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;fake → AI 生成或伪造人脸图片
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;模型输入一张人脸图像，输出它更像 real 还是 fake。&lt;/p&gt;
+&lt;p&gt;这个任务看起来像普通图像分类，但它和猫狗分类不太一样。猫和狗的差异来自真实世界物体本身，而 Deepfake 检测很多时候是在找“伪造痕迹”。这些痕迹可能来自：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;皮肤纹理过于平滑&lt;/li&gt;
+&lt;li&gt;面部边界不自然&lt;/li&gt;
+&lt;li&gt;光照和阴影不一致&lt;/li&gt;
+&lt;li&gt;背景细节异常&lt;/li&gt;
+&lt;li&gt;生成模型留下的统计特征&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;问题是，不同生成模型留下的痕迹不一样。模型如果只记住某个数据集里的伪影，换一个生成器就可能失效。&lt;/p&gt;
+&lt;h3 id=&#34;veritas-论文的核心思路&#34;&gt;VERITAS 论文的核心思路
+&lt;/h3&gt;&lt;p&gt;VERITAS 论文主要解决两个问题。&lt;/p&gt;
+&lt;p&gt;第一个是数据和评估问题。论文提出 HydraFake 数据集，不只是简单收集 real/fake 图片，而是设计了更贴近真实部署的评估方式：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;In-Domain&lt;/strong&gt;：测试数据和训练数据来源相近&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Cross-Model&lt;/strong&gt;：测试 fake 来自没见过的生成模型&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Cross-Forgery&lt;/strong&gt;：测试 fake 来自没见过的伪造技术&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Cross-Domain&lt;/strong&gt;：测试数据进入更复杂的未知域&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;第二个是推理方式问题。VERITAS 不希望模型只输出一个真假标签，而是让多模态大模型按照更接近人工取证的方式推理。论文中的 pattern-aware reasoning 大致包含：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&amp;lt;fast&amp;gt;        快速初步判断
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&amp;lt;planning&amp;gt;    规划要检查哪些线索
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&amp;lt;reasoning&amp;gt;   基于图像证据分析
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&amp;lt;reflection&amp;gt;  反思初始判断是否可靠
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&amp;lt;conclusion&amp;gt;  综合证据给出结论
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&amp;lt;answer&amp;gt;      输出 real 或 fake
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这部分是 VERITAS 最有特色的地方。不过当前项目还没有进入多模态推理阶段，先从基础分类器做起。&lt;/p&gt;
+&lt;h3 id=&#34;为什么先不完整复现-veritas&#34;&gt;为什么先不完整复现 VERITAS
+&lt;/h3&gt;&lt;p&gt;完整 VERITAS 的门槛比较高。它不是简单训练一个 CNN，而是涉及多模态大模型训练和强化学习优化。当前环境也是 CPU 版 PyTorch，直接复现完整模型并不现实。&lt;/p&gt;
+&lt;p&gt;所以我把第一阶段目标定得很明确：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;先不要追论文 SOTA 指标，先把最小可运行流程搭起来。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;也就是先完成：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;数据检查 → 数据划分 → ResNet18 训练 → test 评估 → 结果分析
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这条链路跑通之后，后续再慢慢加入 CLIP baseline、跨域测试和 VERITAS-style prompt。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;数据准备&#34;&gt;数据准备
+&lt;/h2&gt;&lt;h3 id=&#34;hydrafake-val-子集&#34;&gt;HydraFake val 子集
+&lt;/h3&gt;&lt;p&gt;这次没有一开始下载 HydraFake 全量数据，而是先使用 val 子集做最小实验。&lt;/p&gt;
+&lt;p&gt;数据检查结果如下：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;类别&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;数量&lt;/th&gt;
+					&lt;th&gt;格式&lt;/th&gt;
+					&lt;th&gt;尺寸&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;损坏图片&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;fake&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;2000&lt;/td&gt;
+					&lt;td&gt;全部 &lt;code&gt;.png&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;256×256&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;real&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;2000&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;.png&lt;/code&gt; 1420 张，&lt;code&gt;.jpg&lt;/code&gt; 580 张&lt;/td&gt;
+					&lt;td&gt;256×256&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;这个子集有几个好处：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;real 和 fake 数量均衡&lt;/li&gt;
+&lt;li&gt;图片尺寸统一&lt;/li&gt;
+&lt;li&gt;没有损坏图片&lt;/li&gt;
+&lt;li&gt;数据量不大，CPU 环境也能跑&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;当然，它的限制也很明显：这只是 HydraFake 的 val 子集，不是完整的训练集和跨域测试集。所以当前结果只能说明 baseline 在这个小划分上是否有效，不能说明它具备真正的跨域泛化能力。&lt;/p&gt;
+&lt;h3 id=&#34;train--val--test-划分&#34;&gt;train / val / test 划分
+&lt;/h3&gt;&lt;p&gt;我从 &lt;code&gt;data/hydrafake_val&lt;/code&gt; 生成了一个新的实验目录 &lt;code&gt;data/veritas_mini&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;划分比例是 70% / 15% / 15%：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;split&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;real&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;fake&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;总数&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;train&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;1400&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;1400&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;2800&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;val&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;300&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;300&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;600&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;test&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;300&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;300&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;600&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;划分后的目录结构：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;data/veritas_mini/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;├── train/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   ├── fake/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   └── real/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;├── val/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   ├── fake/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   └── real/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;└── test/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    ├── fake/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    └── real/
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;同时保存了 CSV 划分记录：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;data/processed/splits/veritas_mini_split.csv
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;CSV 里记录每张复制后图片和原始图片的对应关系，方便后续追踪数据来源。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;resnet18-baseline-实现&#34;&gt;ResNet18 baseline 实现
+&lt;/h2&gt;&lt;h3 id=&#34;模型设计&#34;&gt;模型设计
+&lt;/h3&gt;&lt;p&gt;第一个 baseline 选择 ResNet18。原因很简单：它足够经典，训练速度比较可控，也适合作为图像分类任务的基础对照。&lt;/p&gt;
+&lt;p&gt;模型设置：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;使用 ImageNet 预训练 ResNet18&lt;/li&gt;
+&lt;li&gt;替换最后的 fully connected layer&lt;/li&gt;
+&lt;li&gt;输出类别数改为 2&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;fake = 0&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;real = 1&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;代码核心逻辑类似这样：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kn&#34;&gt;from&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;torchvision&lt;/span&gt; &lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;models&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;torch.nn&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;as&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;nn&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;weights&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;models&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ResNet18_Weights&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;IMAGENET1K_V1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;model&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;models&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;resnet18&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;weights&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;weights&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;in_features&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;model&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fc&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;in_features&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;model&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fc&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;nn&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Linear&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;in_features&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这里有一个细节要注意：&lt;code&gt;ImageFolder&lt;/code&gt; 会按照文件夹名字排序。当前文件夹是 &lt;code&gt;fake&lt;/code&gt; 和 &lt;code&gt;real&lt;/code&gt;，所以类别映射是：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;fake&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;real&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;数据预处理&#34;&gt;数据预处理
+&lt;/h3&gt;&lt;p&gt;训练集 transform：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;transforms&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Compose&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;([&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;n&#34;&gt;transforms&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Resize&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;((&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;224&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;224&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)),&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;n&#34;&gt;transforms&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;RandomHorizontalFlip&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(),&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;n&#34;&gt;transforms&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ToTensor&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(),&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;n&#34;&gt;transforms&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Normalize&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;n&#34;&gt;mean&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;0.485&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.456&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.406&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;],&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;n&#34;&gt;std&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;0.229&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.224&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.225&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;p&#34;&gt;),&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;验证集和测试集不做随机翻转：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;transforms&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Compose&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;([&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;n&#34;&gt;transforms&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Resize&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;((&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;224&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;224&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)),&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;n&#34;&gt;transforms&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ToTensor&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(),&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;n&#34;&gt;transforms&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Normalize&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;n&#34;&gt;mean&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;0.485&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.456&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.406&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;],&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;n&#34;&gt;std&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;0.229&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.224&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.225&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;p&#34;&gt;),&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;使用 ImageNet 的 mean/std 是因为 ResNet18 的预训练权重来自 ImageNet，输入分布尽量保持一致。&lt;/p&gt;
+&lt;h3 id=&#34;训练配置&#34;&gt;训练配置
+&lt;/h3&gt;&lt;p&gt;训练时的配置如下：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;参数&lt;/th&gt;
+					&lt;th&gt;值&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;epochs&lt;/td&gt;
+					&lt;td&gt;5&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;batch_size&lt;/td&gt;
+					&lt;td&gt;16&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;learning_rate&lt;/td&gt;
+					&lt;td&gt;1e-4&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;optimizer&lt;/td&gt;
+					&lt;td&gt;Adam&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;loss&lt;/td&gt;
+					&lt;td&gt;CrossEntropyLoss&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;device&lt;/td&gt;
+					&lt;td&gt;CPU&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;当前环境是 CPU，所以 batch size 没有设太大。训练时保存了两个 checkpoint：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;outputs/checkpoints/resnet18_best.pth
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;outputs/checkpoints/resnet18_last.pth
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;其中 &lt;code&gt;resnet18_best.pth&lt;/code&gt; 是验证集准确率最高时的模型。&lt;/p&gt;
+&lt;p&gt;训练过程中还保存了：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;outputs/logs/resnet18_train_log.csv
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;outputs/logs/resnet18_class_to_idx.json
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;outputs/figures/resnet18_loss_curve.png
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;outputs/figures/resnet18_acc_curve.png
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;训练过程中的损失和准确率变化如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://AndyFanEEE.github.io/images/deepfake/resnet18_loss_curve.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	decoding=&#34;async&#34;
+	
+		alt=&#34;训练损失曲线&#34;
+	
+	
+&gt;
+&lt;/p&gt;
+&lt;p&gt;训练集损失从初始的 0.55 左右下降到 0.18，验证集损失在第 3 个 epoch 后有所波动但总体趋势下降。训练集准确率从 0.70 提升到接近 0.95，验证集准确率从 0.79 提升到 0.845。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://AndyFanEEE.github.io/images/deepfake/resnet18_acc_curve.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	decoding=&#34;async&#34;
+	
+		alt=&#34;训练准确率曲线&#34;
+	
+	
+&gt;
+&lt;/p&gt;
+&lt;p&gt;可以看到训练集准确率一直在上升，而验证集准确率在第 2 个 epoch 后有轻微波动，说明模型开始出现过拟合趋势。这也是为什么只训练了 5 个 epoch 就停止。&lt;/p&gt;
+&lt;p&gt;最终最佳验证准确率：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;best_val_acc = 0.8450
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id=&#34;测试结果&#34;&gt;测试结果
+&lt;/h2&gt;&lt;p&gt;训练完成后，我使用 &lt;code&gt;resnet18_best.pth&lt;/code&gt; 在 test split 上做正式评估。&lt;/p&gt;
+&lt;p&gt;测试集规模：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;fake: 300
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;real: 300
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;total: 600
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;评估结果：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;指标&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;数值&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Accuracy&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.8400&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Precision macro&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.8401&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Recall macro&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.8400&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;F1 macro&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.8400&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;混淆矩阵：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;True \ Pred&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;fake&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;real&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;fake&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;250&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;50&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;real&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;46&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;254&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;对应的可视化热力图：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://AndyFanEEE.github.io/images/deepfake/resnet18_confusion_matrix.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	decoding=&#34;async&#34;
+	
+		alt=&#34;ResNet18 混淆矩阵&#34;
+	
+	
+&gt;
+&lt;/p&gt;
+&lt;p&gt;从结果看，ResNet18 在这个最小数据划分上是有效的。600 张测试图里预测正确 504 张，整体准确率是 84.0%。&lt;/p&gt;
+&lt;p&gt;fake 和 real 的识别也比较均衡：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;fake 中有 250 张识别正确，50 张被误判为 real（假阴性）&lt;/li&gt;
+&lt;li&gt;real 中有 254 张识别正确，46 张被误判为 fake（假阳性）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;两个方向的错误数量接近，没有出现明显偏向某一类的情况。从热力图可以看出，对角线上的数值较大（250 和 254），说明模型的分类能力比较稳定。&lt;/p&gt;
+&lt;p&gt;不过这个结果也不能看得太乐观。当前训练、验证、测试都来自 HydraFake val 子集的重新划分，数据来源比较接近。这说明模型在当前小数据集上学到了有用特征，但还不能说明它能应对真正的 Cross-Domain 场景。&lt;/p&gt;
+&lt;p&gt;&lt;span style=&#34;color: red;&#34;&gt;换句话说，现在的 84.0% 是一个 baseline 起点，不是 VERITAS 论文里强调的泛化能力证明。&lt;/span&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;clip-baseline-计划&#34;&gt;CLIP baseline 计划
+&lt;/h2&gt;&lt;h3 id=&#34;为什么加入-clip&#34;&gt;为什么加入 CLIP
+&lt;/h3&gt;&lt;p&gt;ResNet18 是传统 CNN baseline。它通过监督训练学习当前数据集里的 real/fake 差异，但也可能比较容易记住数据源特征。&lt;/p&gt;
+&lt;p&gt;所以后续我准备加入 CLIP baseline。CLIP 是大规模图文预训练模型，它的视觉编码器在很多任务上有比较好的迁移能力。这里不微调 CLIP，只把它当作 frozen feature extractor：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;图片 → CLIP image encoder → embedding → Logistic Regression → real/fake
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这样做的好处是训练成本低，尤其适合当前 CPU 环境。&lt;/p&gt;
+&lt;h3 id=&#34;当前实现方案&#34;&gt;当前实现方案
+&lt;/h3&gt;&lt;p&gt;CLIP baseline 脚本已经创建并运行完成：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;src/models/train_clip_logreg.py
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;使用的模型配置：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;model_name = ViT-B-32
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;pretrained = laion2b_s34b_b79k
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;流程是：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;使用 open_clip_torch 加载 CLIP&lt;/li&gt;
+&lt;li&gt;对 train / val / test 图片提取 image embedding&lt;/li&gt;
+&lt;li&gt;对 embedding 做 L2 normalize&lt;/li&gt;
+&lt;li&gt;用 train features 训练 LogisticRegression&lt;/li&gt;
+&lt;li&gt;在 val 和 test 上评估&lt;/li&gt;
+&lt;li&gt;输出指标、预测 CSV 和混淆矩阵&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;提取的特征被缓存在：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;outputs/clip_features/train_features.npz
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;outputs/clip_features/val_features.npz
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;outputs/clip_features/test_features.npz
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;clip--logistic-regression-测试结果&#34;&gt;CLIP + Logistic Regression 测试结果
+&lt;/h3&gt;&lt;p&gt;在测试集上的评估结果：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;指标&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;数值&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Accuracy&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.7383&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Precision macro&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.7386&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Recall macro&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.7383&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;F1 macro&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.7383&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;混淆矩阵：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;True \ Pred&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;fake&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;real&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;fake&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;219&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;81&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;real&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;76&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;224&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;对应的可视化热力图：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://AndyFanEEE.github.io/images/deepfake/clip_logreg_confusion_matrix.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	decoding=&#34;async&#34;
+	
+		alt=&#34;CLIP &amp;#43; Logistic Regression 混淆矩阵&#34;
+	
+	
+&gt;
+&lt;/p&gt;
+&lt;p&gt;从结果看，CLIP + Logistic Regression 的准确率是 73.8%，低于 ResNet18 的 84.0%。&lt;/p&gt;
+&lt;p&gt;具体分析：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;fake 中有 219 张识别正确，81 张被误判为 real（假阴性率约 27%）&lt;/li&gt;
+&lt;li&gt;real 中有 224 张识别正确，76 张被误判为 fake（假阳性率约 25%）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这个结果说明，在当前小数据集上，直接使用 CLIP frozen features + Logistic Regression 的效果不如微调 ResNet18。可能的原因有：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;CLIP 的视觉编码器虽然在大规模数据上预训练，但它没有针对 Deepfake 检测任务进行微调，提取的特征可能不够针对性。&lt;/li&gt;
+&lt;li&gt;Logistic Regression 作为简单分类器，在特征空间中的决策边界可能不如深度神经网络灵活。&lt;/li&gt;
+&lt;li&gt;当前数据集规模较小（2800 张训练图），可能不足以让 CLIP 的迁移能力充分发挥。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;不过这也是一个有意义的对照：它说明在小样本场景下，微调一个基础 CNN 可能比直接使用大规模预训练模型的 frozen features 更有效。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;踩坑记录&#34;&gt;踩坑记录
+&lt;/h2&gt;&lt;h3 id=&#34;坑一完整-veritas-太重不能一开始就硬复现&#34;&gt;坑一：完整 VERITAS 太重，不能一开始就硬复现
+&lt;/h3&gt;&lt;p&gt;最开始看论文时，很容易被 VERITAS 的完整流程带着走：SFT、MiPO、P-GRPO、pattern-aware reasoning，看起来每个都很重要。&lt;/p&gt;
+&lt;p&gt;但实际做下来会发现，如果一开始就想完整复现，很可能会卡在数据规模、显存、大模型训练和标注数据构造上。对于课程项目来说，这样风险太高。&lt;/p&gt;
+&lt;p&gt;最后的处理方式是把目标拆开：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;先做 VERITAS-MINI baseline
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;再做 CLIP 对比
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;后面再考虑 Cross-Domain 和 prompt 推理
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这样每一步都有明确产出，也不会因为目标太大导致项目做不下去。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;坑二cpu-环境训练速度有限&#34;&gt;坑二：CPU 环境训练速度有限
+&lt;/h3&gt;&lt;p&gt;当前 PyTorch 是 CPU 版本：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;torch 2.12.1+cpu
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;torch.cuda.is_available() = False
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这意味着不能像 GPU 环境那样随便加大 batch size 或训练很多 epoch。&lt;/p&gt;
+&lt;p&gt;所以 ResNet18 训练时只用了：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;epochs = 5
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;batch_size = 16
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;CLIP 也不做微调，只提取 frozen embedding，再用 Logistic Regression 训练。这个方案虽然简单，但更适合当前环境。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;坑三imagefolder-的类别顺序必须确认&#34;&gt;坑三：ImageFolder 的类别顺序必须确认
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;torchvision.datasets.ImageFolder&lt;/code&gt; 会按照文件夹名字排序生成类别编号。当前目录是：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;fake/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;real/
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;所以得到：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;fake&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;real&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这个顺序看似小事，但如果后面画混淆矩阵或者保存预测 CSV 时搞反，整篇实验分析都会错。&lt;/p&gt;
+&lt;p&gt;因此训练脚本和评估脚本都打印并保存 &lt;code&gt;class_to_idx&lt;/code&gt;。这也是复现实验中很值得保留的一个小习惯。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;坑四当前测试不是跨域测试&#34;&gt;坑四：当前测试不是跨域测试
+&lt;/h3&gt;&lt;p&gt;ResNet18 的 test accuracy 是 84.0%，看起来还不错。但这里的 test split 来自同一个 HydraFake val 子集的重新划分。&lt;/p&gt;
+&lt;p&gt;这和 VERITAS 论文里真正关心的 Cross-Model、Cross-Forgery、Cross-Domain 还不是一回事。&lt;/p&gt;
+&lt;p&gt;所以当前结果应该这样理解：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;ResNet18 在当前最小划分上可以作为有效 baseline。
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;而不能理解成：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;ResNet18 已经具备很好的 Deepfake 泛化检测能力。
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;后续如果要更贴近论文，需要下载 &lt;code&gt;test/id.zip&lt;/code&gt; 和 &lt;code&gt;test/cd.zip&lt;/code&gt;，做 In-Domain vs Cross-Domain 对比。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;总结与展望&#34;&gt;总结与展望
+&lt;/h2&gt;&lt;h3 id=&#34;总结&#34;&gt;总结
+&lt;/h3&gt;&lt;p&gt;&lt;strong style=&#34;color: green;&#34;&gt;做得还行的地方：&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;这次最小复现已经跑通了两条完整流程：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;ResNet18 baseline&lt;/strong&gt;：数据检查 → 数据划分 → ResNet18 微调 → test 评估 → 结果保存。在 600 张测试图片上取得了 84.0% 的准确率。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;CLIP + Logistic Regression baseline&lt;/strong&gt;：CLIP 特征提取 → L2 归一化 → Logistic Regression 训练 → test 评估。在 600 张测试图片上取得了 73.8% 的准确率。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;两个 baseline 的对比结果如下：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;模型&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;Accuracy&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;Precision&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;Recall&lt;/th&gt;
+					&lt;th style=&#34;text-align: right&#34;&gt;F1&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;ResNet18 (微调)&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.8400&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.8401&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.8400&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.8400&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;CLIP + Logistic Regression&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.7383&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.7386&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.7383&lt;/td&gt;
+					&lt;td style=&#34;text-align: right&#34;&gt;0.7383&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;更重要的是，项目现在有了比较规范的输出文件：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;outputs/checkpoints/resnet18_best.pth
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;outputs/eval/resnet18_test_metrics.json
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;outputs/eval/resnet18_test_predictions.csv
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;outputs/figures/resnet18_confusion_matrix.png
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;outputs/figures/resnet18_loss_curve.png
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;outputs/figures/resnet18_acc_curve.png
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;outputs/clip_features/train_features.npz
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;outputs/eval/clip_logreg_test_metrics.json
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;outputs/figures/clip_logreg_confusion_matrix.png
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这些文件让后续写报告、画图和对比实验都方便很多。&lt;/p&gt;
+&lt;h3 id=&#34;不足之处&#34;&gt;不足之处
+&lt;/h3&gt;&lt;p&gt;&lt;strong style=&#34;color: red;&#34;&gt;目前不足也很明显：&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;当前只使用 HydraFake val 子集，没有覆盖完整 HydraFake 的分层测试协议。ResNet18 的结果只能说明它在当前小规模划分上有效，不能说明它面对未知生成器或未知伪造方式时仍然可靠。&lt;/p&gt;
+&lt;p&gt;另外，训练准确率高于验证和测试准确率，说明模型存在一定过拟合趋势。这个问题后续需要通过 CLIP baseline 和跨域测试进一步观察。&lt;/p&gt;
+&lt;h3 id=&#34;后续计划&#34;&gt;后续计划
+&lt;/h3&gt;&lt;p&gt;&lt;strong style=&#34;color: blue;&#34;&gt;后续准备继续做三件事：&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;第一，运行 CLIP + Logistic Regression baseline，看看大规模预训练图像特征在这个任务上是否比 ResNet18 更稳。&lt;/p&gt;
+&lt;p&gt;第二，下载 HydraFake 的 &lt;code&gt;test/id.zip&lt;/code&gt; 和 &lt;code&gt;test/cd.zip&lt;/code&gt;，做 In-Domain 和 Cross-Domain 对比。这个阶段会更接近 VERITAS 论文真正关心的问题。&lt;/p&gt;
+&lt;p&gt;第三，尝试 VERITAS-style pattern-aware prompt。也就是不训练大模型，而是调用多模态模型，让它按照：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&amp;lt;fast&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&amp;lt;planning&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&amp;lt;reasoning&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&amp;lt;reflection&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&amp;lt;conclusion&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&amp;lt;answer&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这种格式输出判断过程。这个阶段主要观察结构化 prompt 是否能让解释更具体、更稳定。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;参考文献&#34;&gt;参考文献
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Tan H, Lan J, Tan Z, et al. VERITAS: Generalizable Deepfake Detection via Pattern-Aware Reasoning. ICLR 2026.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;He K, Zhang X, Ren S, Sun J. Deep Residual Learning for Image Recognition. CVPR 2016.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Radford A, Kim J W, Hallacy C, et al. Learning Transferable Visual Models From Natural Language Supervision. ICML 2021.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;HydraFake 数据集页面：https://www.modelscope.cn/datasets/EricTanh/HydraFake&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+        </item>
+        <item>
+        <title>基于的击键动力学的身份认证系统实现</title>
+        <link>https://AndyFanEEE.github.io/p/%E5%9F%BA%E4%BA%8E%E7%9A%84%E5%87%BB%E9%94%AE%E5%8A%A8%E5%8A%9B%E5%AD%A6%E7%9A%84%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0/</link>
         <pubDate>Tue, 21 Apr 2026 17:07:15 +0800</pubDate>
         
-        <guid>https://AndyFanEEE.github.io/p/%E5%9F%BA%E4%BA%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E5%87%BB%E9%94%AE%E5%8A%A8%E5%8A%9B%E5%AD%A6%E7%9A%84%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0/</guid>
+        <guid>https://AndyFanEEE.github.io/p/%E5%9F%BA%E4%BA%8E%E7%9A%84%E5%87%BB%E9%94%AE%E5%8A%A8%E5%8A%9B%E5%AD%A6%E7%9A%84%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0/</guid>
         <description>&lt;h2 id=&#34;前言&#34;&gt;前言
 &lt;/h2&gt;&lt;p&gt;&lt;span style=&#34;color: #999;&#34;&gt;摆烂了好久，一直没想好第一个文章写什么内容。最终这学期身份认证课程有一个课程项目，刚好能写下给实现过程做个简单的记录。&lt;/span&gt;&lt;/p&gt;
 &lt;p&gt;本项目是课程作业要求根据一篇有关安全认证的论文，复现其认证方法。然后在搜索资料的时候看到了一篇有关“击键动力学”的论文，看了内容感觉难度适合，而且最后复现展示的效果也感觉比较有意思，于是直接就搜集资料开始工作。&lt;/p&gt;
@@ -578,6 +2316,7 @@ $$&lt;p&gt;其中：&lt;/p&gt;
 &lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
 &lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
 &lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class=&#34;lntd&#34;&gt;
 &lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 采集接口&lt;/span&gt;
@@ -597,7 +2336,8 @@ $$&lt;p&gt;其中：&lt;/p&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;s2&#34;&gt;&amp;#34;threshold&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;round&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;threshold&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;4&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;claimed&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;user_id&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;p&#34;&gt;})&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 构建模板接口（一键触发，不用手动跑脚本）&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 构建模板接口&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nd&#34;&gt;@app.route&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;/build_templates&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;methods&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;POST&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;build_templates&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;():&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;n&#34;&gt;results&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;build_all_templates&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;

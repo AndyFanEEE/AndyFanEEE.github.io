@@ -3,10 +3,55 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://AndyFanEEE.github.io/</loc>
-    <lastmod>2026-06-09T00:00:00+08:00</lastmod>
+    <lastmod>2026-07-10T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://AndyFanEEE.github.io/categories/</loc>
-    <lastmod>2026-06-09T00:00:00+08:00</lastmod>
+    <lastmod>2026-07-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://AndyFanEEE.github.io/tags/deepfake%E6%A3%80%E6%B5%8B/</loc>
+    <lastmod>2026-07-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://AndyFanEEE.github.io/post/</loc>
+    <lastmod>2026-07-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://AndyFanEEE.github.io/tags/prompt%E5%B7%A5%E7%A8%8B/</loc>
+    <lastmod>2026-07-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://AndyFanEEE.github.io/tags/qwen-vl/</loc>
+    <lastmod>2026-07-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://AndyFanEEE.github.io/tags/</loc>
+    <lastmod>2026-07-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://AndyFanEEE.github.io/tags/veritas/</loc>
+    <lastmod>2026-07-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://AndyFanEEE.github.io/tags/%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B/</loc>
+    <lastmod>2026-07-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://AndyFanEEE.github.io/p/%E5%9F%BA%E4%BA%8E%E5%8D%83%E9%97%AE-qwen-vl-%E7%9A%84-deepfake-%E6%A3%80%E6%B5%8B%E4%B8%AD%E7%AD%89%E5%A4%8D%E7%8E%B0veritas-style-prompt-%E5%AE%9E%E9%AA%8C/</loc>
+    <lastmod>2026-07-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://AndyFanEEE.github.io/tags/%E5%8D%83%E9%97%AE/</loc>
+    <lastmod>2026-07-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://AndyFanEEE.github.io/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/</loc>
+    <lastmod>2026-07-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://AndyFanEEE.github.io/categories/%E9%A1%B9%E7%9B%AE%E5%A4%8D%E7%8E%B0/</loc>
+    <lastmod>2026-07-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://AndyFanEEE.github.io/tags/clip/</loc>
+    <lastmod>2026-07-05T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://AndyFanEEE.github.io/tags/hydrafake/</loc>
+    <lastmod>2026-07-05T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://AndyFanEEE.github.io/tags/resnet18/</loc>
+    <lastmod>2026-07-05T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://AndyFanEEE.github.io/p/%E5%9F%BA%E4%BA%8E-veritas-%E7%9A%84-deepfake-%E6%A3%80%E6%B5%8B%E6%9C%80%E5%B0%8F%E5%A4%8D%E7%8E%B0hydrafake-%E6%95%B0%E6%8D%AE%E9%9B%86%E4%B8%8E-resnet18-baseline/</loc>
+    <lastmod>2026-07-05T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://AndyFanEEE.github.io/tags/giscus/</loc>
     <lastmod>2026-06-09T00:00:00+08:00</lastmod>
@@ -23,13 +68,7 @@
     <loc>https://AndyFanEEE.github.io/tags/pjax/</loc>
     <lastmod>2026-06-09T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>https://AndyFanEEE.github.io/post/</loc>
-    <lastmod>2026-06-09T00:00:00+08:00</lastmod>
-  </url><url>
     <loc>https://AndyFanEEE.github.io/tags/stack/</loc>
-    <lastmod>2026-06-09T00:00:00+08:00</lastmod>
-  </url><url>
-    <loc>https://AndyFanEEE.github.io/tags/</loc>
     <lastmod>2026-06-09T00:00:00+08:00</lastmod>
   </url><url>
     <loc>https://AndyFanEEE.github.io/categories/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/</loc>
@@ -74,7 +113,7 @@
     <loc>https://AndyFanEEE.github.io/tags/%E5%87%BB%E9%94%AE%E5%8A%A8%E5%8A%9B%E5%AD%A6/</loc>
     <lastmod>2026-04-21T17:07:15+08:00</lastmod>
   </url><url>
-    <loc>https://AndyFanEEE.github.io/p/%E5%9F%BA%E4%BA%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E5%87%BB%E9%94%AE%E5%8A%A8%E5%8A%9B%E5%AD%A6%E7%9A%84%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0/</loc>
+    <loc>https://AndyFanEEE.github.io/p/%E5%9F%BA%E4%BA%8E%E7%9A%84%E5%87%BB%E9%94%AE%E5%8A%A8%E5%8A%9B%E5%AD%A6%E7%9A%84%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0/</loc>
     <lastmod>2026-04-21T17:07:15+08:00</lastmod>
   </url><url>
     <loc>https://AndyFanEEE.github.io/tags/%E9%A9%AC%E6%B0%8F%E8%B7%9D%E7%A6%BB/</loc>
@@ -86,9 +125,6 @@
     <loc>https://AndyFanEEE.github.io/tags/%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81/</loc>
     <lastmod>2026-04-21T17:07:15+08:00</lastmod>
   </url><url>
-    <loc>https://AndyFanEEE.github.io/categories/%E9%A1%B9%E7%9B%AE%E5%A4%8D%E7%8E%B0/</loc>
-    <lastmod>2026-04-21T17:07:15+08:00</lastmod>
-  </url><url>
     <loc>https://AndyFanEEE.github.io/page/</loc>
     <lastmod>2026-02-12T00:00:00+00:00</lastmod>
   </url><url>
@@ -97,6 +133,8 @@
   </url><url>
     <loc>https://AndyFanEEE.github.io/archives/</loc>
     <lastmod>2026-02-12T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://AndyFanEEE.github.io/p/</loc>
   </url><url>
     <loc>https://AndyFanEEE.github.io/categories/test/</loc>
   </url><url>

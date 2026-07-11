@@ -2,16 +2,16 @@
 <html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前言 摆烂了好久，一直没想好第一个文章写什么内容。最终这学期身份认证课程有一个课程项目，刚好能写下给实现过程做个简单的记录。\n">
-<title>基于机器学习的击键动力学的身份认证系统实现</title>
+<title>基于的击键动力学的身份认证系统实现</title>
 
-<link rel='canonical' href='https://AndyFanEEE.github.io/p/%E5%9F%BA%E4%BA%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E5%87%BB%E9%94%AE%E5%8A%A8%E5%8A%9B%E5%AD%A6%E7%9A%84%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0/'>
+<link rel='canonical' href='https://AndyFanEEE.github.io/p/%E5%9F%BA%E4%BA%8E%E7%9A%84%E5%87%BB%E9%94%AE%E5%8A%A8%E5%8A%9B%E5%AD%A6%E7%9A%84%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0/'>
 
-<link rel="stylesheet" href="/scss/style.min.6fe10bc85083cca372dc87fabe26dea9db704fabcee0a7de965ff3eb7579062b.css"><meta property='og:title' content="基于机器学习的击键动力学的身份认证系统实现">
+<link rel="stylesheet" href="/scss/style.min.6fe10bc85083cca372dc87fabe26dea9db704fabcee0a7de965ff3eb7579062b.css"><meta property='og:title' content="基于的击键动力学的身份认证系统实现">
 <meta property='og:description' content="前言 摆烂了好久，一直没想好第一个文章写什么内容。最终这学期身份认证课程有一个课程项目，刚好能写下给实现过程做个简单的记录。\n">
-<meta property='og:url' content='https://AndyFanEEE.github.io/p/%E5%9F%BA%E4%BA%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E5%87%BB%E9%94%AE%E5%8A%A8%E5%8A%9B%E5%AD%A6%E7%9A%84%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0/'>
+<meta property='og:url' content='https://AndyFanEEE.github.io/p/%E5%9F%BA%E4%BA%8E%E7%9A%84%E5%87%BB%E9%94%AE%E5%8A%A8%E5%8A%9B%E5%AD%A6%E7%9A%84%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0/'>
 <meta property='og:site_name' content='FaN'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='身份认证' /><meta property='article:tag' content='击键动力学' /><meta property='article:tag' content='异常检测' /><meta property='article:tag' content='马氏距离' /><meta property='article:tag' content='欧氏距离' /><meta property='article:published_time' content='2026-04-21T17:07:15&#43;08:00'/><meta property='article:modified_time' content='2026-04-21T17:07:15&#43;08:00'/>
-<meta name="twitter:title" content="基于机器学习的击键动力学的身份认证系统实现">
+<meta name="twitter:title" content="基于的击键动力学的身份认证系统实现">
 <meta name="twitter:description" content="前言 摆烂了好久，一直没想好第一个文章写什么内容。最终这学期身份认证课程有一个课程项目，刚好能写下给实现过程做个简单的记录。\n">
     <link rel="shortcut icon" href="/favicon.ico" />
 <script>
@@ -557,7 +557,7 @@
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="/p/%E5%9F%BA%E4%BA%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E5%87%BB%E9%94%AE%E5%8A%A8%E5%8A%9B%E5%AD%A6%E7%9A%84%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0/">基于机器学习的击键动力学的身份认证系统实现</a>
+            <a href="/p/%E5%9F%BA%E4%BA%8E%E7%9A%84%E5%87%BB%E9%94%AE%E5%8A%A8%E5%8A%9B%E5%AD%A6%E7%9A%84%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0/">基于的击键动力学的身份认证系统实现</a>
         </h2>
     
         
@@ -1174,6 +1174,7 @@ $$<p>其中：</p>
 </span><span class="lnt">26
 </span><span class="lnt">27
 </span><span class="lnt">28
+</span><span class="lnt">29
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 采集接口</span>
@@ -1193,7 +1194,8 @@ $$<p>其中：</p>
 </span></span><span class="line"><span class="cl">        <span class="s2">&#34;threshold&#34;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">threshold</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">&#34;claimed&#34;</span><span class="p">:</span> <span class="n">user_id</span>
 </span></span><span class="line"><span class="cl">    <span class="p">})</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># 构建模板接口（一键触发，不用手动跑脚本）</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 构建模板接口</span>
+</span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/build_templates&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
 </span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">build_templates</span><span class="p">():</span>
 </span></span><span class="line"><span class="cl">    <span class="n">results</span> <span class="o">=</span> <span class="n">build_all_templates</span><span class="p">()</span>
@@ -1321,6 +1323,32 @@ $$<p>其中：</p>
 
         <div class="article-details">
             <h2 class="article-title">基于 1D-CNN 的 SQL 注入检测系统实现：从规则匹配到深度学习</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/%E5%9F%BA%E4%BA%8E%E5%8D%83%E9%97%AE-qwen-vl-%E7%9A%84-deepfake-%E6%A3%80%E6%B5%8B%E4%B8%AD%E7%AD%89%E5%A4%8D%E7%8E%B0veritas-style-prompt-%E5%AE%9E%E9%AA%8C/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">基于千问 Qwen-VL 的 Deepfake 检测中等复现：VERITAS-style Prompt 实验</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/%E5%9F%BA%E4%BA%8E-veritas-%E7%9A%84-deepfake-%E6%A3%80%E6%B5%8B%E6%9C%80%E5%B0%8F%E5%A4%8D%E7%8E%B0hydrafake-%E6%95%B0%E6%8D%AE%E9%9B%86%E4%B8%8E-resnet18-baseline/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">基于 VERITAS 的 Deepfake 检测最小复现：HydraFake 数据集与 ResNet18 baseline</h2>
         </div>
     </a>
 </article>

@@ -7,7 +7,79 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
         <copyright>Fan&#39;s Blog</copyright>
-        <lastBuildDate>Tue, 09 Jun 2026 00:00:00 +0800</lastBuildDate><atom:link href="https://AndyFanEEE.github.io/tags/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Fri, 10 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://AndyFanEEE.github.io/tags/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Deepfake检测</title>
+        <link>https://AndyFanEEE.github.io/tags/deepfake%E6%A3%80%E6%B5%8B/</link>
+        <pubDate>Fri, 10 Jul 2026 00:00:00 +0000</pubDate>
+        
+        <guid>https://AndyFanEEE.github.io/tags/deepfake%E6%A3%80%E6%B5%8B/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Prompt工程</title>
+        <link>https://AndyFanEEE.github.io/tags/prompt%E5%B7%A5%E7%A8%8B/</link>
+        <pubDate>Fri, 10 Jul 2026 00:00:00 +0000</pubDate>
+        
+        <guid>https://AndyFanEEE.github.io/tags/prompt%E5%B7%A5%E7%A8%8B/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Qwen-VL</title>
+        <link>https://AndyFanEEE.github.io/tags/qwen-vl/</link>
+        <pubDate>Fri, 10 Jul 2026 00:00:00 +0000</pubDate>
+        
+        <guid>https://AndyFanEEE.github.io/tags/qwen-vl/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>VERITAS</title>
+        <link>https://AndyFanEEE.github.io/tags/veritas/</link>
+        <pubDate>Fri, 10 Jul 2026 00:00:00 +0000</pubDate>
+        
+        <guid>https://AndyFanEEE.github.io/tags/veritas/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>多模态大模型</title>
+        <link>https://AndyFanEEE.github.io/tags/%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B/</link>
+        <pubDate>Fri, 10 Jul 2026 00:00:00 +0000</pubDate>
+        
+        <guid>https://AndyFanEEE.github.io/tags/%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>千问</title>
+        <link>https://AndyFanEEE.github.io/tags/%E5%8D%83%E9%97%AE/</link>
+        <pubDate>Fri, 10 Jul 2026 00:00:00 +0000</pubDate>
+        
+        <guid>https://AndyFanEEE.github.io/tags/%E5%8D%83%E9%97%AE/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>CLIP</title>
+        <link>https://AndyFanEEE.github.io/tags/clip/</link>
+        <pubDate>Sun, 05 Jul 2026 00:00:00 +0000</pubDate>
+        
+        <guid>https://AndyFanEEE.github.io/tags/clip/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>HydraFake</title>
+        <link>https://AndyFanEEE.github.io/tags/hydrafake/</link>
+        <pubDate>Sun, 05 Jul 2026 00:00:00 +0000</pubDate>
+        
+        <guid>https://AndyFanEEE.github.io/tags/hydrafake/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>ResNet18</title>
+        <link>https://AndyFanEEE.github.io/tags/resnet18/</link>
+        <pubDate>Sun, 05 Jul 2026 00:00:00 +0000</pubDate>
+        
+        <guid>https://AndyFanEEE.github.io/tags/resnet18/</guid>
+        <description></description>
+        </item>
+        <item>
         <title>Giscus</title>
         <link>https://AndyFanEEE.github.io/tags/giscus/</link>
         <pubDate>Tue, 09 Jun 2026 00:00:00 +0800</pubDate>
