@@ -511,6 +511,7 @@
         <li><a href="#veritas-style-prompt">VERITAS-style prompt</a></li>
       </ol>
     </li>
+    <li><a href="#实验文件对应关系">实验文件对应关系</a></li>
     <li><a href="#工程改动">工程改动</a>
       <ol>
         <li><a href="#1-接入真实-api">1. 接入真实 API</a></li>
@@ -521,7 +522,7 @@
     </li>
     <li><a href="#第一次问题格式不稳定">第一次问题：格式不稳定</a></li>
     <li><a href="#第二次问题模型过于保守">第二次问题：模型过于保守</a></li>
-    <li><a href="#balanced-v4-实验结果">balanced v4 实验结果</a></li>
+    <li><a href="#balanced-100-实验结果">balanced 100 实验结果</a></li>
     <li><a href="#怎么理解这个结果">怎么理解这个结果</a></li>
     <li><a href="#和第一阶段-baseline-的对比">和第一阶段 baseline 的对比</a></li>
     <li><a href="#踩坑记录">踩坑记录</a>
@@ -531,6 +532,7 @@
         <li><a href="#坑三format_valid_rate-高不代表分类好">坑三：format_valid_rate 高不代表分类好</a></li>
       </ol>
     </li>
+    <li><a href="#从-20-张到-100-张趋势有没有变">从 20 张到 100 张：趋势有没有变</a></li>
     <li><a href="#当前结论">当前结论</a></li>
     <li><a href="#后续计划">后续计划</a></li>
     <li><a href="#参考资料">参考资料</a></li>
@@ -602,7 +604,7 @@
 
 
                 <time class="article-time--reading">
-                    阅读时长: 10 分钟
+                    阅读时长: 12 分钟
                 </time>
             </div>
         
@@ -650,6 +652,7 @@
 </div><p>但 VERITAS 论文真正有意思的地方，不只是判断真假，而是让多模态大模型按照一种更接近&quot;取证分析&quot;的方式推理。它希望模型不是只给一个标签，而是先观察图像、规划检查区域、分析证据、反思判断，最后再给出答案。</p>
 <p>所以第二篇的重点换成了多模态大模型。</p>
 <p>这次我使用的是千问 Qwen-VL，通过 DashScope 的 OpenAI-compatible 接口调用。目标不是完整复现 VERITAS 的训练流程，而是做一个 prompt-level 中等复现：比较 basic prompt、CoT prompt 和 VERITAS-style prompt 在 Deepfake 检测任务上的表现。</p>
+<p>本文使用的是 balanced 100 实验结果，即每种 prompt 分别评估 100 张图片，其中 fake 50 张、real 50 张。</p>
 <hr>
 <h2 id="为什么要做这一阶段">为什么要做这一阶段
 </h2><p>第一阶段已经有两个 baseline：</p>
@@ -799,7 +802,7 @@
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>表示从 fake 里取 5 张，从 real 里取 5 张，总共 10 张。</p>
-<p>最终 balanced v4 实验使用的是：</p>
+<p>最终正式实验使用 balanced 100：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -807,12 +810,43 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">fake: 10
-</span></span><span class="line"><span class="cl">real: 10
-</span></span><span class="line"><span class="cl">total: 20
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">fake: 50
+</span></span><span class="line"><span class="cl">real: 50
+</span></span><span class="line"><span class="cl">total: 100
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>样本不大，但适合控制 API 成本，也方便观察 prompt 行为。</p>
+</div><p>需要注意的是，这 100 张图片仍然来自 <code>data/veritas_mini/test</code>，也就是 HydraFake val 子集重新划分后的 test split，不是 HydraFake 官方 Cross-Domain 测试集。</p>
+<p>三种 prompt 分别在同一批 100 张平衡样本上评估：</p>
+<ul>
+<li>basic prompt</li>
+<li>CoT prompt</li>
+<li>VERITAS-style prompt</li>
+</ul>
+<p>也就是说，原始 API 结果总数是：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">basic: 100
+</span></span><span class="line"><span class="cl">cot: 100
+</span></span><span class="line"><span class="cl">veritas_style: 100
+</span></span><span class="line"><span class="cl">total API records: 300
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>正式运行时使用的命令类似这样：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">python</span> <span class="n">src</span><span class="p">\</span><span class="n">mllm</span><span class="p">\</span><span class="n">run_mllm_prompt_eval</span><span class="p">.</span><span class="py">py</span> <span class="p">-</span><span class="n">-prompt_type</span> <span class="n">basic</span> <span class="p">-</span><span class="n">-model</span> <span class="nb">qwen-vl</span><span class="n">-plus</span> <span class="p">-</span><span class="n">-per_class_limit</span> <span class="mf">50</span> <span class="p">-</span><span class="n">-resume</span> <span class="p">-</span><span class="n">-output_csv</span> <span class="n">outputs</span><span class="p">\</span><span class="n">mllm</span><span class="p">\</span><span class="n">qwen_vl_plus_balanced_100_prompt_results</span><span class="p">.</span><span class="py">csv</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>CoT 和 VERITAS-style prompt 也使用同一批 balanced 100 样本，只替换 <code>--prompt_type</code>。</p>
 <hr>
 <h2 id="三种-prompt-设计">三种 prompt 设计
 </h2><p>这次比较了三种 prompt。</p>
@@ -938,6 +972,40 @@
 </div>
 </div><p>这样后续脚本才能稳定解析结果。</p>
 <hr>
+<h2 id="实验文件对应关系">实验文件对应关系
+</h2><p>为了方便后面复查结果，这次实验里原始输出、解析结果和指标文件都分开保存。</p>
+<div class="table-wrapper"><table>
+	<thead>
+			<tr>
+					<th>内容</th>
+					<th>文件</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>原始 API 输出</td>
+					<td><code>outputs/mllm/qwen_vl_plus_balanced_100_prompt_results.csv</code></td>
+			</tr>
+			<tr>
+					<td>解析后预测</td>
+					<td><code>outputs/mllm/qwen_vl_plus_balanced_100_predictions_parsed.csv</code></td>
+			</tr>
+			<tr>
+					<td>详细指标</td>
+					<td><code>outputs/mllm/qwen_vl_plus_balanced_100_metrics_detailed.csv</code></td>
+			</tr>
+			<tr>
+					<td>调用脚本</td>
+					<td><code>src/mllm/run_mllm_prompt_eval.py</code></td>
+			</tr>
+			<tr>
+					<td>评估脚本</td>
+					<td><code>src/mllm/evaluate_prompt_outputs.py</code></td>
+			</tr>
+	</tbody>
+</table></div>
+<p>这张表也对应后面结果部分使用的数据来源。</p>
+<hr>
 <h2 id="工程改动">工程改动
 </h2><p>这一阶段不只是写 prompt，还补了不少工程逻辑。</p>
 <h3 id="1-接入真实-api">1. 接入真实 API
@@ -960,7 +1028,7 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">outputs/mllm/qwen_vl_plus_balanced_v4_prompt_results.csv
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">outputs/mllm/qwen_vl_plus_balanced_100_prompt_results.csv
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>解析结果和指标也单独保存：</p>
@@ -970,8 +1038,8 @@
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">outputs/mllm/qwen_vl_plus_balanced_v4_predictions_parsed.csv
-</span></span><span class="line"><span class="cl">outputs/mllm/qwen_vl_plus_balanced_v4_metrics_detailed.csv
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">outputs/mllm/qwen_vl_plus_balanced_100_predictions_parsed.csv
+</span></span><span class="line"><span class="cl">outputs/mllm/qwen_vl_plus_balanced_100_metrics_detailed.csv
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="3-加强空输出处理">3. 加强空输出处理
@@ -1102,8 +1170,8 @@
 </div>
 </div><p>这个修改的目标不是强行让模型多判 fake，而是提醒它不要把“看起来正常”直接当成 real 的证据。</p>
 <hr>
-<h2 id="balanced-v4-实验结果">balanced v4 实验结果
-</h2><p>当前阶段我暂时以 balanced v4 作为主要分析结果。</p>
+<h2 id="balanced-100-实验结果">balanced 100 实验结果
+</h2><p>当前阶段我以 balanced 100 作为正式分析结果。</p>
 <p>样本规模：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -1112,9 +1180,9 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">fake: 10
-</span></span><span class="line"><span class="cl">real: 10
-</span></span><span class="line"><span class="cl">total: 20
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">fake: 50
+</span></span><span class="line"><span class="cl">real: 50
+</span></span><span class="line"><span class="cl">total: 100
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>三种 prompt 的结果如下：</p>
@@ -1131,24 +1199,24 @@
 	<tbody>
 			<tr>
 					<td>basic</td>
-					<td style="text-align: right">0.6000</td>
-					<td style="text-align: right">0.5604</td>
+					<td style="text-align: right">0.5900</td>
+					<td style="text-align: right">0.5399</td>
 					<td style="text-align: right">0</td>
 					<td style="text-align: right">-</td>
 			</tr>
 			<tr>
 					<td>CoT</td>
-					<td style="text-align: right">0.6500</td>
-					<td style="text-align: right">0.6011</td>
+					<td style="text-align: right">0.5200</td>
+					<td style="text-align: right">0.3912</td>
 					<td style="text-align: right">0</td>
 					<td style="text-align: right">-</td>
 			</tr>
 			<tr>
 					<td>VERITAS-style</td>
-					<td style="text-align: right">0.5500</td>
-					<td style="text-align: right">0.4872</td>
+					<td style="text-align: right">0.5200</td>
+					<td style="text-align: right">0.4485</td>
 					<td style="text-align: right">0</td>
-					<td style="text-align: right">1.0000</td>
+					<td style="text-align: right">0.9700</td>
 			</tr>
 	</tbody>
 </table></div>
@@ -1168,30 +1236,30 @@
 	<tbody>
 			<tr>
 					<td>basic</td>
-					<td style="text-align: right">0.7500</td>
-					<td style="text-align: right">0.3000</td>
-					<td style="text-align: right">0.4286</td>
-					<td style="text-align: right">0.5625</td>
-					<td style="text-align: right">0.9000</td>
-					<td style="text-align: right">0.6923</td>
+					<td style="text-align: right">0.7647</td>
+					<td style="text-align: right">0.2600</td>
+					<td style="text-align: right">0.3881</td>
+					<td style="text-align: right">0.5542</td>
+					<td style="text-align: right">0.9200</td>
+					<td style="text-align: right">0.6917</td>
 			</tr>
 			<tr>
 					<td>CoT</td>
-					<td style="text-align: right">1.0000</td>
-					<td style="text-align: right">0.3000</td>
-					<td style="text-align: right">0.4615</td>
-					<td style="text-align: right">0.5882</td>
-					<td style="text-align: right">1.0000</td>
-					<td style="text-align: right">0.7407</td>
+					<td style="text-align: right">0.7500</td>
+					<td style="text-align: right">0.0600</td>
+					<td style="text-align: right">0.1111</td>
+					<td style="text-align: right">0.5104</td>
+					<td style="text-align: right">0.9800</td>
+					<td style="text-align: right">0.6712</td>
 			</tr>
 			<tr>
 					<td>VERITAS-style</td>
-					<td style="text-align: right">0.5294</td>
-					<td style="text-align: right">0.9000</td>
-					<td style="text-align: right">0.6667</td>
-					<td style="text-align: right">0.6667</td>
-					<td style="text-align: right">0.2000</td>
-					<td style="text-align: right">0.3077</td>
+					<td style="text-align: right">0.5116</td>
+					<td style="text-align: right">0.8800</td>
+					<td style="text-align: right">0.6471</td>
+					<td style="text-align: right">0.5714</td>
+					<td style="text-align: right">0.1600</td>
+					<td style="text-align: right">0.2500</td>
 			</tr>
 	</tbody>
 </table></div>
@@ -1208,13 +1276,13 @@
 	<tbody>
 			<tr>
 					<td>fake</td>
-					<td style="text-align: right">3</td>
-					<td style="text-align: right">7</td>
+					<td style="text-align: right">13</td>
+					<td style="text-align: right">37</td>
 			</tr>
 			<tr>
 					<td>real</td>
-					<td style="text-align: right">1</td>
-					<td style="text-align: right">9</td>
+					<td style="text-align: right">4</td>
+					<td style="text-align: right">46</td>
 			</tr>
 	</tbody>
 </table></div>
@@ -1231,12 +1299,12 @@
 			<tr>
 					<td>fake</td>
 					<td style="text-align: right">3</td>
-					<td style="text-align: right">7</td>
+					<td style="text-align: right">47</td>
 			</tr>
 			<tr>
 					<td>real</td>
-					<td style="text-align: right">0</td>
-					<td style="text-align: right">10</td>
+					<td style="text-align: right">1</td>
+					<td style="text-align: right">49</td>
 			</tr>
 	</tbody>
 </table></div>
@@ -1252,34 +1320,47 @@
 	<tbody>
 			<tr>
 					<td>fake</td>
-					<td style="text-align: right">9</td>
-					<td style="text-align: right">1</td>
+					<td style="text-align: right">44</td>
+					<td style="text-align: right">6</td>
 			</tr>
 			<tr>
 					<td>real</td>
+					<td style="text-align: right">42</td>
 					<td style="text-align: right">8</td>
-					<td style="text-align: right">2</td>
 			</tr>
 	</tbody>
 </table></div>
 <p>这个结果很直观。</p>
-<p>basic 和 CoT 都明显偏向 real。尤其是 CoT，10 张 real 全部判对，但 10 张 fake 只识别出 3 张。</p>
-<p>而加强后的 VERITAS-style prompt 正好反过来。它对 fake 更敏感，10 张 fake 识别出 9 张，fake recall 达到 0.9000。但它也把 8 张 real 误判成 fake，real recall 只有 0.2000。</p>
+<p>basic prompt 仍然偏向 real。它对真实图片非常友好，real recall 达到 0.9200，但对 fake 的漏检明显：50 张 fake 中只有 13 张被识别出来，fake recall 只有 0.2600。</p>
+<p>CoT prompt 的 real bias 更严重。50 张 fake 里它只识别出 3 张，fake recall 只有 0.0600；同时 50 张 real 里有 49 张被判对，real recall 达到 0.9800。普通 CoT 并没有改善 Deepfake 检测，反而让模型更保守，几乎默认图像为 real。</p>
+<p>VERITAS-style prompt 则把模型从 real-biased 拉到了 fake-sensitive。它在 50 张 fake 中识别出 44 张，fake recall 达到 0.8800；但代价也很明显，50 张 real 中只有 8 张判对，real recall 只有 0.1600。</p>
 <p>也就是说，prompt 确实改变了模型的判断倾向，但也引入了新的偏置。</p>
 <hr>
 <h2 id="怎么理解这个结果">怎么理解这个结果
-</h2><p>如果只看 accuracy，CoT 是最高的：</p>
+</h2><p>如果只看 accuracy，basic prompt 是最高的：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">CoT accuracy = 0.6500
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">basic accuracy = 0.5900
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>但如果看类别表现，就会发现 CoT 的问题很明显：它几乎不愿意判 fake。</p>
-<p>对于 Deepfake 检测来说，这种模型可能会漏掉很多伪造图像。</p>
-<p>VERITAS-style prompt 则相反。它变得更敏感，能抓到更多 fake，但误报 real 的情况严重。</p>
+</div><p>但这个最高并不代表它已经适合 Deepfake 检测。basic 的优势主要来自 real recall 很高，而不是 fake 检测能力很强。</p>
+<p>CoT 的问题更明显：它几乎不愿意判 fake。对于 Deepfake 检测来说，这种模型会漏掉大量伪造图像。</p>
+<p>VERITAS-style prompt 则相反。它变得更敏感，能抓到更多 fake，但误报 real 的情况严重。这个结果说明结构化、取证式 prompt 确实能改变模型的注意方向，但还不能自然得到一个平衡的分类器。</p>
+<p>还有一个细节是格式稳定性。balanced 100 中：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">format_valid_rate = 0.9700
+</span></span><span class="line"><span class="cl">unknown_count = 0
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这说明格式约束整体有效。即使规模从 20 张扩大到 100 张，VERITAS-style 输出仍然基本可解析。不过 <code>format_valid_rate</code> 从小样本里的 1.0 降到 0.9700，也说明在更大规模下仍会出现少量格式不完整的输出。</p>
 <p>这说明 prompt 像一个旋钮：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -1323,29 +1404,29 @@
 			</tr>
 			<tr>
 					<td>Qwen-VL basic</td>
-					<td style="text-align: right">20</td>
-					<td style="text-align: right">0.6000</td>
-					<td style="text-align: right">0.5604</td>
+					<td style="text-align: right">100</td>
+					<td style="text-align: right">0.5900</td>
+					<td style="text-align: right">0.5399</td>
 					<td>偏向 real</td>
 			</tr>
 			<tr>
 					<td>Qwen-VL CoT</td>
-					<td style="text-align: right">20</td>
-					<td style="text-align: right">0.6500</td>
-					<td style="text-align: right">0.6011</td>
-					<td>仍偏向 real</td>
+					<td style="text-align: right">100</td>
+					<td style="text-align: right">0.5200</td>
+					<td style="text-align: right">0.3912</td>
+					<td>real bias 最严重</td>
 			</tr>
 			<tr>
 					<td>Qwen-VL VERITAS-style</td>
-					<td style="text-align: right">20</td>
-					<td style="text-align: right">0.5500</td>
-					<td style="text-align: right">0.4872</td>
-					<td>格式稳定，但偏向 fake</td>
+					<td style="text-align: right">100</td>
+					<td style="text-align: right">0.5200</td>
+					<td style="text-align: right">0.4485</td>
+					<td>fake recall 高，但误报 real 多</td>
 			</tr>
 	</tbody>
 </table></div>
 <p>这里不能直接说 ResNet18 一定强于 Qwen-VL。因为测试规模不同，任务形式也不同。</p>
-<p>ResNet18 和 CLIP 是在 600 张 test 图上评估。Qwen-VL 只是 20 张小样本 API 实验。</p>
+<p>ResNet18 和 CLIP 是在 600 张 test 图上评估。Qwen-VL 是 100 张 balanced API 实验。</p>
 <p><strong>因此，这张表主要用于展示项目阶段进展，而不是严格公平的模型性能排名。</strong></p>
 <p>但这组结果仍然说明了一个现象：在当前最小复现阶段，传统监督模型的分类结果更稳定；多模态大模型的价值更多体现在解释、推理格式和判断倾向分析上。</p>
 <hr>
@@ -1361,9 +1442,9 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">qwen_vl_plus_balanced_v4_prompt_results.csv
-</span></span><span class="line"><span class="cl">qwen_vl_plus_balanced_v4_predictions_parsed.csv
-</span></span><span class="line"><span class="cl">qwen_vl_plus_balanced_v4_metrics_detailed.csv
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">qwen_vl_plus_balanced_100_prompt_results.csv
+</span></span><span class="line"><span class="cl">qwen_vl_plus_balanced_100_predictions_parsed.csv
+</span></span><span class="line"><span class="cl">qwen_vl_plus_balanced_100_metrics_detailed.csv
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="坑二csv-里-raw_output-太长">坑二：CSV 里 raw_output 太长
@@ -1388,30 +1469,39 @@
 </div>
 </div><p>这样能直接看每条记录是否成功。</p>
 <h3 id="坑三format_valid_rate-高不代表分类好">坑三：format_valid_rate 高不代表分类好
-</h3><p>VERITAS-style prompt 的 <code>format_valid_rate</code> 达到 1.0，只能说明模型按格式输出了。</p>
+</h3><p>VERITAS-style prompt 的 <code>format_valid_rate</code> 很高，只能说明模型基本按格式输出了。</p>
 <p>它不代表模型判断一定正确。</p>
-<p>balanced v2 就是一个例子：格式完全正确，但 fake 全部被判成 real。后面 prompt 调整后，fake recall 上来了，但 real 还是被误报。</p>
+<p>balanced v2 就是一个例子：格式完全正确，但 fake 全部被判成 real。后面 prompt 调整后，fake recall 上来了，但 real 还是被误报。到 balanced 100 时，VERITAS-style 的 <code>format_valid_rate</code> 是 0.9700，说明格式约束仍然有效，但分类偏置没有因为格式稳定而自动消失。</p>
+<hr>
+<h2 id="从-20-张到-100-张趋势有没有变">从 20 张到 100 张：趋势有没有变
+</h2><p>balanced v4 的 20 张小样本只能看趋势，不能代表稳定性能。所以我把样本扩大到了 balanced 100，并让三种 prompt 在同一批 100 张图片上重新评估。</p>
+<p>扩大之后，20 张时看到的 prompt 偏置并没有消失。</p>
+<p>basic prompt 继续偏向 real。它能把大多数 real 判对，但会漏掉很多 fake。</p>
+<p>CoT prompt 的 real bias 更严重。普通的 step-by-step 分析没有让模型更会找伪造痕迹，反而让它更倾向于给出保守判断。</p>
+<p>VERITAS-style prompt 继续偏向 fake。它确实提高了 fake recall，也说明 prompt 能改变模型的判断方向；但它同时牺牲了 real recall，把大量真实图片误报成 fake。</p>
+<p>所以从 20 张到 100 张，核心趋势没有变：prompt 像旋钮，能把模型从保守推向敏感，也能从 real-biased 拉到 fake-sensitive。但只靠 prompt，还不能稳定平衡 fake recall 和 real recall。</p>
 <hr>
 <h2 id="当前结论">当前结论
 </h2><p>这一阶段没有让 Qwen-VL 在准确率上超过 ResNet18，但它补上了传统 baseline 缺少的一块：结构化解释。</p>
 <p>从结果看：</p>
 <ul>
 <li>basic prompt 和 CoT prompt 更保守，容易判 real；</li>
-<li>在 balanced v4 实验中，VERITAS-style prompt 的 <code>format_valid_rate</code> 达到 1.0；</li>
-<li>加强伪影约束后，VERITAS-style 对 fake 更敏感；</li>
-<li>但它也更容易把 real 误判成 fake；</li>
+<li>在 balanced 100 实验中，VERITAS-style prompt 的 <code>format_valid_rate</code> 达到 0.9700；</li>
+<li>加强伪影约束后，VERITAS-style 对 fake 更敏感，fake recall 达到 0.8800；</li>
+<li>但它也更容易把 real 误判成 fake，real recall 只有 0.1600；</li>
 <li>prompt 能改变模型倾向，但很难单独保证分类稳定。</li>
 </ul>
 <p>所以我对这一阶段的判断是：</p>
 <blockquote>
 <p>VERITAS-style prompt 可以复现 pattern-aware reasoning 的外在形式，也能引导模型关注伪造线索。但如果只靠 prompt，不经过训练或偏好优化，很难同时做到高准确率、低偏置和稳定解释。</p>
 </blockquote>
+<p>因此，本文结论只说明 Qwen-VL 在当前小规模平衡样本上的 prompt 行为，不代表它在完整 Deepfake 检测任务上的稳定性能。</p>
 <p>这和 VERITAS 论文的设计方向是吻合的。论文没有停留在 prompt 工程，而是继续做 SFT、MiPO 和 P-GRPO，目的就是让模型的推理过程和最终判断都更稳定。</p>
 <hr>
 <h2 id="后续计划">后续计划
 </h2><p>下一步我准备继续做三件事。</p>
-<p>第一，把 Qwen-VL 的样本规模扩大到 100 张，也就是 fake 50 张、real 50 张。现在 20 张样本只能看趋势，不能代表稳定性能。</p>
-<p>第二，继续调 VERITAS-style prompt。当前版本 fake recall 高，但 real recall 太低，需要找到一个更平衡的提示方式。</p>
+<p>第一，继续扩大到完整 test split，或者至少每类 100 张以上。balanced 100 已经比 20 张小样本稳定，但还不足以代表完整测试集表现。</p>
+<p>第二，继续调 VERITAS-style prompt。当前版本 fake recall 高，但 real 被误报为 fake 的比例也高，需要降低 real 误报，同时尽量保住 fake recall。</p>
 <p>第三，下载 HydraFake 的 In-Domain 和 Cross-Domain 测试集。当前所有实验还是基于 val 子集重划分，距离 VERITAS 论文真正关心的泛化评估还有一步。</p>
 <p>到目前为止，这个项目已经从 CPU baseline 走到了多模态推理阶段。它还不是完整 VERITAS，但已经更接近论文真正想讨论的问题：Deepfake 检测不只是判断真假，还要考虑模型看到了什么、为什么这样判断，以及这种判断能不能泛化到新的伪造方式。</p>
 <hr>
@@ -1430,13 +1520,7 @@
 <p>Qwen-VL 模型相关文档：https://help.aliyun.com/zh/model-studio/</p>
 </li>
 </ol>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"></code></pre></td></tr></table>
-</div>
-</div>
+
 </section>
 
 
