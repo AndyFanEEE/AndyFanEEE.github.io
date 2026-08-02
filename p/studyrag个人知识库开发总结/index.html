@@ -572,6 +572,7 @@
       </ol>
     </li>
     <li><a href="#做得好的地方与不足">做得好的地方与不足</a></li>
+    <li><a href="#多轮聊天流式响应agentlanggraphhybrid-searchrerankerocr用户权限和后台任务都没有进入当前-mvp这些功能能让项目更大却不一定能让核心-rag-逻辑更清楚后续会再对项目进行升级">多轮聊天、流式响应、Agent、LangGraph、Hybrid Search、Reranker、OCR、用户权限和后台任务都没有进入当前 MVP。这些功能能让项目更大，却不一定能让核心 RAG 逻辑更清楚。后续会再对项目进行升级。</a></li>
     <li><a href="#总结">总结</a></li>
     <li><a href="#参考资料">参考资料</a></li>
   </ol>
@@ -638,7 +639,7 @@
 
 
                 <time class="article-time--reading">
-                    阅读时长: 22 分钟
+                    阅读时长: 21 分钟
                 </time>
             </div>
         
@@ -1652,12 +1653,10 @@ $$<p>所以：</p>
 </h2><p><strong style="color: green;">做得好的点：</strong></p>
 <p>RAG 流程拆得比较清楚，检索候选、阈值过滤、Context、LLM 和 Sources 都能单独观察。知识库隔离不只依赖 Chroma metadata，还会回查 SQLite。删除流程虽然复杂，但对文件、数据库和向量做了明确补偿。Fake Provider 让 317 项测试可以离线重复运行，真实 BGE 验证又补上了模型效果证据。</p>
 <p><strong style="color: red;">不足之处：</strong></p>
-<p>真实 OpenAI-compatible LLM 还没有配置凭据，因此 grounded 回答、真实 token usage、认证失败和限流只通过 Fake Provider 或错误映射测试验证。当前阈值只用少量样本观察过，不能认为 <code>0.50</code> 是通用最优值。扫描 PDF 没有 OCR，表格和复杂排版的提取效果也取决于 pypdf。</p>
 <p>如果进程在删除认领提交后被强制终止，文档或知识库可能遗留 <code>deleting</code> 状态。当前提供了 <code>processing</code> 单文档恢复 CLI，但还没有专门的 deleting 恢复工具。另一个低概率问题是最终 <code>os.replace()</code> 遇到普通文件系统异常时，<code>.tmp</code> 可能留下临时文件，后续可以补统一 finally 清理。</p>
 <p><strong style="color: blue;">现在不打算增加的功能：</strong></p>
-<p>多轮聊天、流式响应、Agent、LangGraph、Hybrid Search、Reranker、OCR、用户权限和后台任务都没有进入当前 MVP。这些功能能让项目更大，却不一定能让核心 RAG 逻辑更清楚。对简历项目来说，先保证主流程可解释、可测试、可演示更重要。</p>
-<hr>
-<h2 id="总结">总结
+<h2 id="多轮聊天流式响应agentlanggraphhybrid-searchrerankerocr用户权限和后台任务都没有进入当前-mvp这些功能能让项目更大却不一定能让核心-rag-逻辑更清楚后续会再对项目进行升级">多轮聊天、流式响应、Agent、LangGraph、Hybrid Search、Reranker、OCR、用户权限和后台任务都没有进入当前 MVP。这些功能能让项目更大，却不一定能让核心 RAG 逻辑更清楚。后续会再对项目进行升级。
+</h2><h2 id="总结">总结
 </h2><p>从学习角度看，这个项目让我把RAG拆成了可以逐项解释的工程问题：为什么要切分、Embedding 如何检索、Top-K为什么不等于相关、什么时候不能调用LLM、引用为什么必须由metadata组装，以及跨存储删除为什么需要认领和补偿。</p>
 <p>目前项目可以作为 MVP 封板，也可以用于简历和实习面试演示。演示时最适合按下面的顺序进行：创建知识库，上传两份不同主题资料，完成索引，在 Inspector 中比较分数，再展示相关问题、无关问题和来源引用。真实 LLM 尚未验证这一点需要如实说明。</p>
 <h2 id="参考资料">参考资料
