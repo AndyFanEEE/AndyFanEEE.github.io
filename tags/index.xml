@@ -7,20 +7,52 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
         <copyright>Fan&#39;s Blog</copyright>
-        <lastBuildDate>Tue, 14 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://AndyFanEEE.github.io/tags/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sun, 02 Aug 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://AndyFanEEE.github.io/tags/index.xml" rel="self" type="application/rss+xml" /><item>
         <title>ChromaDB</title>
         <link>https://AndyFanEEE.github.io/tags/chromadb/</link>
-        <pubDate>Tue, 14 Jul 2026 00:00:00 +0000</pubDate>
+        <pubDate>Sun, 02 Aug 2026 00:00:00 +0000</pubDate>
         
         <guid>https://AndyFanEEE.github.io/tags/chromadb/</guid>
         <description></description>
         </item>
         <item>
+        <title>Embedding</title>
+        <link>https://AndyFanEEE.github.io/tags/embedding/</link>
+        <pubDate>Sun, 02 Aug 2026 00:00:00 +0000</pubDate>
+        
+        <guid>https://AndyFanEEE.github.io/tags/embedding/</guid>
+        <description></description>
+        </item>
+        <item>
         <title>FastAPI</title>
         <link>https://AndyFanEEE.github.io/tags/fastapi/</link>
-        <pubDate>Tue, 14 Jul 2026 00:00:00 +0000</pubDate>
+        <pubDate>Sun, 02 Aug 2026 00:00:00 +0000</pubDate>
         
         <guid>https://AndyFanEEE.github.io/tags/fastapi/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>LangChain</title>
+        <link>https://AndyFanEEE.github.io/tags/langchain/</link>
+        <pubDate>Sun, 02 Aug 2026 00:00:00 +0000</pubDate>
+        
+        <guid>https://AndyFanEEE.github.io/tags/langchain/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>RAG</title>
+        <link>https://AndyFanEEE.github.io/tags/rag/</link>
+        <pubDate>Sun, 02 Aug 2026 00:00:00 +0000</pubDate>
+        
+        <guid>https://AndyFanEEE.github.io/tags/rag/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Streamlit</title>
+        <link>https://AndyFanEEE.github.io/tags/streamlit/</link>
+        <pubDate>Sun, 02 Aug 2026 00:00:00 +0000</pubDate>
+        
+        <guid>https://AndyFanEEE.github.io/tags/streamlit/</guid>
         <description></description>
         </item>
         <item>
@@ -37,14 +69,6 @@
         <pubDate>Tue, 14 Jul 2026 00:00:00 +0000</pubDate>
         
         <guid>https://AndyFanEEE.github.io/tags/pytest/</guid>
-        <description></description>
-        </item>
-        <item>
-        <title>RAG</title>
-        <link>https://AndyFanEEE.github.io/tags/rag/</link>
-        <pubDate>Tue, 14 Jul 2026 00:00:00 +0000</pubDate>
-        
-        <guid>https://AndyFanEEE.github.io/tags/rag/</guid>
         <description></description>
         </item>
         <item>
